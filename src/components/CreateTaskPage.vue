@@ -4,24 +4,23 @@
         <div class="col-md-6">
           <div class="card">
             <div class="card-header">
-              <h3>Create Department</h3>
+              <h3>Create Task</h3>
             </div>
             <div class="card-body">
-              <form @submit.prevent="createDepartment">
+              <form @submit.prevent="createTask">
                 <div class="form-group mb-3">
-                  <label for="name">Name</label>
-                  <input type="text" v-model="name" class="form-control text-uppercase" id="name" required>
+                  <label for="description">Description</label>
+                  <input type="text" v-model="description" class="form-control text-uppercase" id="description" required>
                 </div>
                 <div class="form-group mb-3">
-                  <label for="discount">Discount</label>
-                  <input type="number" v-model="discount" class="form-control" id="discount" required>
+                  <label for="deadline">Deadline</label>
+                  <input type="date" v-model="deadline" class="form-control" id="deadline" required>
                 </div>
                 <div class="form-group mb-3">
-                  <label for="departmentManager">Department Manager</label>
-                  <select v-model="departmentManager" class="form-control" id="departmentManager">
-                    <option value="">Select a manager</option>
-                    <option v-for="employee in filteredEmployees" :key="employee._id" :value="employee._id">
-                      {{ employee.name }}
+                  <label for="employee">Employee</label>
+                  <select v-model="employee" class="form-control" id="employee" required>
+                    <option v-for="emp in employees" :key="emp.nif" :value="emp.nif">
+                      {{ emp.name }}
                     </option>
                   </select>
                 </div>
@@ -39,19 +38,15 @@
   
   <script>
   export default {
-    name: 'CreateDepartmentPage',
+    name: 'CreateTaskPage',
     data() {
       return {
-        name: '',
-        discount: '',
-        departmentManager: '',
+        description: '',
+        deadline: '',
+        finished: false,
+        employee: '',
         employees: [],
         errorMessage: ''
-      }
-    },
-    computed: {
-      filteredEmployees() {
-        return this.employees.filter(employee => employee.role === 'Gestor');
       }
     },
     async created() {
@@ -76,32 +71,33 @@
       }
     },
     methods: {
-      async createDepartment() {
+      async createTask() {
         try {
-          const response = await fetch('http://localhost:8080/api/department', {
+          const response = await fetch('http://localhost:8080/api/tasks', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
               'Authorization': `Bearer ${localStorage.getItem('userToken')}`
             },
             body: JSON.stringify({
-              name: this.name,
-              discount: this.discount,
-              departmentManager: this.departmentManager || null
+              description: this.description,
+              deadline: this.deadline,
+              finished: this.finished,
+              employee: this.employee
             })
           });
   
           if (!response.ok) {
-            throw new Error('Failed to create department');
+            throw new Error('Failed to create task');
           }
   
           const data = await response.json();
-          console.log('Department created successfully:', data);
+          console.log('Task created successfully:', data);
           this.errorMessage = ''; // Clear any previous error message
-          this.$router.push('/departments'); // Redirect to departments page
+          this.$router.push('/tasks'); // Redirect to tasks page
         } catch (error) {
-          console.error('Error creating department:', error);
-          this.errorMessage = 'Failed to create department. Please try again later.';
+          console.error('Error creating task:', error);
+          this.errorMessage = 'Failed to create task. Please try again later.';
         }
       }
     }

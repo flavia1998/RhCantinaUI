@@ -7,16 +7,22 @@ import EditDepartmentPage from './components/EditDepartmentPage.vue'
 import EmployeesPage from './components/EmployeesPage.vue'
 import CreateEmployeePage from './components/CreateEmployeePage.vue'
 import EditEmployeePage from './components/EditEmployeePage.vue'
+import TasksPage from './components/TasksPage.vue'
+import CreateTaskPage from './components/CreateTaskPage.vue'
+import EditTaskPage from './components/EditTaskPage.vue'
 
 const routes = [
-  { path: '/', component: LoginPage },
+  { path: '/login', component: LoginPage },
   { path: '/register', component: RegisterPage },
   { path: '/departments', component: DepartmentsPage },
   { path: '/create-department', component: CreateDepartmentPage },
   { path: '/edit-department/:id', component: EditDepartmentPage },
   { path: '/employees', component: EmployeesPage },
   { path: '/create-employee', component: CreateEmployeePage },
-  { path: '/edit-employee/:id', component: EditEmployeePage }
+  { path: '/edit-employee/:id', component: EditEmployeePage },
+  { path: '/tasks', component: TasksPage },
+  { path: '/create-task', component: CreateTaskPage },
+  { path: '/edit-task/:id', component: EditTaskPage }
 ]
 
 const router = createRouter({

@@ -59,7 +59,9 @@ export default {
 
         const data = await response.json();
         console.log('Login successful:', data);
-        localStorage.setItem('userToken', data.userToken); // Save the token to localStorage
+        const {username, department, role, nif, userToken} = data;
+        localStorage.setItem('userToken', userToken); // Save the token to localStorage
+        localStorage.setItem('user', JSON.stringify({ username, department, role, nif }));
         this.errorMessage = ''; // Clear any previous error message
         // Handle successful login here (e.g., redirect to another page)
       } catch (error) {

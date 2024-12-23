@@ -132,7 +132,4 @@
   .container {
     margin-top: 50px;
   }
-  .text-uppercase {
-    text-transform: uppercase;
-  }
   </style>
