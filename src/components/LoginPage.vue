@@ -18,9 +18,11 @@
               </div>
               <button type="submit" class="btn btn-primary">Login</button>
             </form>
-            <button @click="goToRegister" class="btn btn-link mt-3">Don't have an account? Register</button>
             <div v-if="errorMessage" class="alert alert-danger mt-3" role="alert">
               {{ errorMessage }}
+            </div>
+            <div class="mt-3">
+              <p>Don't have an account? <a href="#" @click="goToRegister">Register</a></p>
             </div>
           </div>
         </div>
@@ -59,11 +61,11 @@ export default {
 
         const data = await response.json();
         console.log('Login successful:', data);
-        const {username, department, role, nif, userToken} = data;
-        localStorage.setItem('userToken', userToken); // Save the token to localStorage
-        localStorage.setItem('user', JSON.stringify({ username, department, role, nif }));
+        const user = data;
+        localStorage.setItem('user', JSON.stringify(user));
         this.errorMessage = ''; // Clear any previous error message
-        // Handle successful login here (e.g., redirect to another page)
+        this.$emit('user-logged-in', user); // Emit event to notify parent component
+        this.$router.push('/'); // Redirect to home page
       } catch (error) {
         console.error('Login failed:', error);
         this.errorMessage = 'Login failed. Please check your credentials and try again.';

@@ -8,35 +8,38 @@
             <button @click="goToCreateEmployee" class="btn btn-primary">Create Employee</button>
           </div>
           <div class="card-body">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>NIF</th>
-                  <th>Name</th>
-                  <th>Card Balance</th>
-                  <th>Role</th>
-                  <th>Department</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="employee in employees" :key="employee.nif">
-                  <td>{{ employee.nif }}</td>
-                  <td>{{ employee.name }}</td>
-                  <td>{{ employee.cardBalance }}</td>
-                  <td>{{ employee.role }}</td>
-                  <td>{{ employee.department?.name }}</td>
-                  <td>
-                    <div class="btn-group" role="group">
-                      <button @click="goToEditEmployee(employee.nif)" class="btn btn-warning btn-sm">Edit</button>
-                      <button @click="confirmDeleteEmployee(employee.nif)" class="btn btn-danger btn-sm">Delete</button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <div v-if="errorMessage" class="alert alert-danger mt-3" role="alert">
-              {{ errorMessage }}
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>NIF</th>
+                    <th>Name</th>
+                    <th>Card Balance</th>
+                    <th>Role</th>
+                    <th>Department</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="employee in employees" :key="employee.nif">
+                    <td>{{ employee.nif }}</td>
+                    <td>{{ employee.name }}</td>
+                    <td>{{ employee.cardBalance }}</td>
+                    <td>{{ employee.role }}</td>
+                    <td>{{ employee.department?.name }}</td>
+                    <td>
+                      <div class="btn-group" role="group">
+                        <button @click="goToEditEmployee(employee.nif)" class="btn btn-warning btn-sm">Edit</button>
+                        <button @click="confirmDeleteEmployee(employee.nif)"
+                          class="btn btn-danger btn-sm">Delete</button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <div v-if="errorMessage" class="alert alert-danger mt-3" role="alert">
+                {{ errorMessage }}
+              </div>
             </div>
           </div>
         </div>
@@ -46,6 +49,8 @@
 </template>
 
 <script>
+import { fetchWithAuth } from '@/api';
+
 export default {
   name: 'EmployeesPage',
   data() {
@@ -56,11 +61,10 @@ export default {
   },
   async created() {
     try {
-      const response = await fetch('http://localhost:8080/api/employee', {
+      const response = await fetchWithAuth('http://localhost:8080/api/employee', {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('userToken')}`
+          'Content-Type': 'application/json'
         }
       });
 
@@ -89,11 +93,10 @@ export default {
     },
     async deleteEmployee(employeeId) {
       try {
-        const response = await fetch(`http://localhost:8080/api/employee/${employeeId}`, {
+        const response = await fetchWithAuth(`http://localhost:8080/api/employee/${employeeId}`, {
           method: 'DELETE',
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('userToken')}`
+            'Content-Type': 'application/json'
           }
         });
 

@@ -8,32 +8,33 @@
             <button @click="goToCreateDepartment" class="btn btn-primary">Create Department</button>
           </div>
           <div class="card-body">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Name</th>
-                  <th>Discount</th>
-                  <th>Department Manager</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="department in departments" :key="department._id">
-                  <td>{{ department._id }}</td>
-                  <td>{{ department.name }}</td>
-                  <td>{{ department.discount }}</td>
-                  <td>{{ department.departmentManager.name }}</td>
-                  <td>
-                    <div class="btn-group" role="group">
-                      <button @click="goToEditDepartment(department._id)" class="btn btn-warning btn-sm">Edit</button>
-                      <button @click="confirmDeleteDepartment(department._id)"
-                        class="btn btn-danger btn-sm">Delete</button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Discount</th>
+                    <th>Department Manager</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="department in departments" :key="department._id">
+                    <td>{{ department._id }}</td>
+                    <td>{{ department.name }}</td>
+                    <td>{{ department.discount }}</td>
+                    <td>{{ department.departmentManager.name }}</td>
+                    <td>
+                      <div class="btn-group" role="group">
+                        <button @click="goToEditDepartment(department._id)" class="btn btn-warning btn-sm">Edit</button>
+                        <button @click="confirmDeleteDepartment(department._id)" class="btn btn-danger btn-sm">Delete</button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
             <div v-if="errorMessage" class="alert alert-danger mt-3" role="alert">
               {{ errorMessage }}
             </div>
@@ -45,6 +46,7 @@
 </template>
 
 <script>
+import { fetchWithAuth } from '@/api';
 export default {
   name: 'DepartmentsPage',
   data() {
@@ -55,11 +57,10 @@ export default {
   },
   async created() {
     try {
-      const response = await fetch('http://localhost:8080/api/department', {
+      const response = await fetchWithAuth('http://localhost:8080/api/department', {
         method: 'GET',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('userToken')}`
+          'Content-Type': 'application/json'
         }
       });
 
@@ -88,11 +89,10 @@ export default {
     },
     async deleteDepartment(departmentId) {
       try {
-        const response = await fetch(`http://localhost:8080/api/department/${departmentId}`, {
+        const response = await fetchWithAuth(`http://localhost:8080/api/department/${departmentId}`, {
           method: 'DELETE',
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('userToken')}`
+            'Content-Type': 'application/json'
           }
         });
 

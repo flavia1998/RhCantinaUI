@@ -4,10 +4,10 @@
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header">
-                        <h3>Create Employee</h3>
+                        <h3>Edit Employee</h3>
                     </div>
                     <div class="card-body">
-                        <form @submit.prevent="createEmployee">
+                        <form @submit.prevent="editEmployee">
                             <div class="form-group mb-3">
                                 <label for="name">Name</label>
                                 <input type="text" v-model="name" class="form-control" id="name" required>
@@ -37,7 +37,7 @@
                                     </option>
                                 </select>
                             </div>
-                            <button type="submit" class="btn btn-primary">Create</button>
+                            <button type="submit" class="btn btn-primary">Save</button>
                         </form>
                         <div v-if="errorMessage" class="alert alert-danger mt-3" role="alert">
                             {{ errorMessage }}
@@ -50,8 +50,9 @@
 </template>
 
 <script>
+import { fetchWithAuth } from '@/api';
 export default {
-    name: 'CreateEmployeePage',
+    name: 'EditEmployeePage',
     data() {
         return {
             name: '',
@@ -59,18 +60,37 @@ export default {
             cardBalance: 0,
             role: '',
             department: '',
-            errorMessage: '',
-            departments: []
+            departments: [],
+            errorMessage: ''
         }
     },
     async created() {
+        const employeeId = this.$route.params.id;
         try {
-            // Fetch departments
-            const departmentsResponse = await fetch('http://localhost:8080/api/department', {
+            // Fetch employee details
+            const employeeResponse = await fetchWithAuth(`http://localhost:8080/api/employee/${employeeId}`, {
                 method: 'GET',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('userToken')}`
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!employeeResponse.ok) {
+                throw new Error('Failed to fetch employee');
+            }
+
+            const employeeData = await employeeResponse.json();
+            this.name = employeeData.name;
+            this.nif = employeeData.nif;
+            this.cardBalance = employeeData.cardBalance;
+            this.role = employeeData.role;
+            this.department = employeeData.department?._id;
+
+            // Fetch departments
+            const departmentsResponse = await fetchWithAuth('http://localhost:8080/api/department', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
                 }
             });
 
@@ -86,13 +106,13 @@ export default {
         }
     },
     methods: {
-        async createEmployee() {
+        async editEmployee() {
+            const employeeId = this.$route.params.id;
             try {
-                const response = await fetch('http://localhost:8080/api/employee', {
-                    method: 'POST',
+                const response = await fetchWithAuth(`http://localhost:8080/api/employee/${employeeId}`, {
+                    method: 'PUT',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('userToken')}`
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
                         name: this.name,
@@ -104,16 +124,16 @@ export default {
                 });
 
                 if (!response.ok) {
-                    throw new Error('Failed to create employee');
+                    throw new Error('Failed to update employee');
                 }
 
                 const data = await response.json();
-                console.log('Employee created successfully:', data);
+                console.log('Employee updated successfully:', data);
                 this.errorMessage = ''; // Clear any previous error message
                 this.$router.push('/employees'); // Redirect to employees page
             } catch (error) {
-                console.error('Error creating employee:', error);
-                this.errorMessage = 'Failed to create employee. Please try again later.';
+                console.error('Error updating employee:', error);
+                this.errorMessage = 'Failed to update employee. Please try again later.';
             }
         }
     }

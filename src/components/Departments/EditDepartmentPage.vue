@@ -37,7 +37,8 @@
   </template>
   
   <script>
-  export default {
+import { fetchWithAuth } from '@/api';
+export default {
     name: 'EditDepartmentPage',
     data() {
       return {
@@ -57,11 +58,10 @@
       const departmentId = this.$route.params.id;
       try {
         // Fetch department details
-        const departmentResponse = await fetch(`http://localhost:8080/api/department/${departmentId}`, {
+        const departmentResponse = await fetchWithAuth(`http://localhost:8080/api/department/${departmentId}`, {
           method: 'GET',
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('userToken')}`
+            'Content-Type': 'application/json'
           }
         });
   
@@ -75,11 +75,10 @@
         this.departmentManager = departmentData.departmentManager;
   
         // Fetch employees
-        const employeesResponse = await fetch('http://localhost:8080/api/employee', {
+        const employeesResponse = await fetchWithAuth('http://localhost:8080/api/employee', {
           method: 'GET',
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('userToken')}`
+            'Content-Type': 'application/json'
           }
         });
   
@@ -98,11 +97,10 @@
       async editDepartment() {
         const departmentId = this.$route.params.id;
         try {
-          const response = await fetch(`http://localhost:8080/api/department/${departmentId}`, {
+          const response = await fetchWithAuth(`http://localhost:8080/api/department/${departmentId}`, {
             method: 'PUT',
             headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${localStorage.getItem('userToken')}`
+              'Content-Type': 'application/json'
             },
             body: JSON.stringify({
               name: this.name,
