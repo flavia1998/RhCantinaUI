@@ -5,7 +5,7 @@
         <div class="card">
           <div class="card-header d-flex justify-content-between align-items-center">
             <h3>Tasks</h3>
-            <button @click="goToCreateTask" class="btn btn-primary">Create Task</button>
+            <button v-if="user && user.role !== 'Funcionario'" @click="goToCreateTask" class="btn btn-primary">Create Task</button>
           </div>
           <div class="card-body">
             <div class="table-responsive">
@@ -30,10 +30,10 @@
                     <td>
                       <div class="btn-group" role="group">
                         <button v-if="user && user.role === 'Administrador' || user.role === 'Gestor'"
-                          @click="goToEditTask(task._id)" class="btn btn-warning btn-sm me">Edit</button>
+                          @click="goToEditTask(task._id)" class="btn btn-warning me">Edit</button>
                         <button v-if="user && user.role === 'Administrador' || user.role === 'Gestor'"
-                          @click="confirmDeleteTask(task._id)" class="btn btn-danger btn-sm">Delete</button>
-                        <button @click="confirmFinishTask(task._id)" class="btn btn-success btn-sm">Finish</button>
+                          @click="confirmDeleteTask(task._id)" class="btn btn-danger">Delete</button>
+                        <button v-if="!task.finished" @click="confirmFinishTask(task._id)" class="btn btn-success">Finish</button>
                       </div>
                     </td>
                   </tr>
@@ -64,18 +64,10 @@ export default {
   },
   async created() {
     try {
-      let url;
-      switch (this.user.role) {
-        case "Administrador":
-          url = 'http://localhost:8080/api/tasks';
-          break;
-        case "Funcionario":
-          url = `http://localhost:8080/api/tasks/employee/${this.user.employee.nif}`;
-          break;
-        default:
-          url = 'http://localhost:8080/api/tasks';
-          break;
-      }
+      const url = this.user && this.user.role === "Administrador"
+        ? 'http://localhost:8080/api/tasks'
+        : `http://localhost:8080/api/tasks/employee/${this.user.employee.nif}`;
+
       const response = await fetchWithAuth(url, {
         method: 'GET',
         headers: {

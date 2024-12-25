@@ -27,9 +27,9 @@
                     <td>{{ department.departmentManager?.name }}</td>
                     <td>
                       <div class="btn-group" role="group">
-                        <button @click="goToViewDepartment(department._id)" class="btn btn-info btn-sm">View</button>
-                        <button @click="goToEditDepartment(department._id)" class="btn btn-warning btn-sm">Edit</button>
-                        <button @click="confirmDeleteDepartment(department._id)" class="btn btn-danger btn-sm">Delete</button>
+                        <button @click="goToViewDepartment(department._id)" class="btn btn-info">View</button>
+                        <button @click="goToEditDepartment(department._id)" class="btn btn-warning">Edit</button>
+                        <button @click="confirmDeleteDepartment(department._id)" class="btn btn-danger">Delete</button>
                       </div>
                     </td>
                   </tr>

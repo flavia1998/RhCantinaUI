@@ -13,7 +13,7 @@
               <router-link class="nav-link" :to="link.path">{{ link.name }}</router-link>
             </li>
           </ul>
-          <div v-if="user?.username" class="dropdown">
+          <div v-if="user?.username" class="dropdown ms-auto">
             <button class="btn btn-secondary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown"
               aria-expanded="false">
               <b>{{ user.username }}</b> <span>{{ user.role }}</span>
@@ -58,7 +58,7 @@ export default {
         let employee = await getEmployeeByNif(user.nif);
         this.user.employee = employee;
       }
-
+      
       localStorage.setItem('user', JSON.stringify(user));
     },
     logout() {

@@ -26,9 +26,9 @@
                     <td>{{ user.is_active ? 'Active' : 'Inactive' }}</td>
                     <td>
                       <div class="btn-group" role="group">
-                        <button v-if="!user.is_active" @click="openActivateModal(user)" class="btn btn-success btn-sm">Activate</button>
-                        <button v-if="user.is_active" @click="confirmDeactivateUser(user)" class="btn btn-danger btn-sm">Deactivate</button>
-                        <button @click="goToEditUser(user.username)" class="btn btn-warning btn-sm">Edit</button>
+                        <button @click="goToEditUser(user.username)" class="btn btn-warning">Edit</button>
+                        <button v-if="!user.is_active" @click="openActivateModal(user)" class="btn btn-success">Activate</button>
+                        <button v-if="user.is_active" @click="confirmDeactivateUser(user)" class="btn btn-danger">Deactivate</button>
                       </div>
                     </td>
                   </tr>

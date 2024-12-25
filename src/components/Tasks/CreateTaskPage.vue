@@ -40,6 +40,7 @@
 import { fetchWithAuth } from '@/api';
 export default {
     name: 'CreateTaskPage',
+    props: ['user'],
     data() {
       return {
         description: '',
@@ -52,7 +53,10 @@ export default {
     },
     async created() {
       try {
-        const response = await fetchWithAuth('http://localhost:8080/api/employee', {
+        const url = this.user.role === "Administrador" 
+        ? 'http://localhost:8080/api/employee' 
+        : `http://localhost:8080/api/employee/department/${this.user.employee.department._id}`;
+        const response = await fetchWithAuth(url, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'

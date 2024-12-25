@@ -28,10 +28,10 @@
                     <td>{{ employee.cardBalance }}</td>
                     <td>
                       <div class="btn-group" role="group">
-                        <button @click="goToViewEmployee(employee.nif)" class="btn btn-info btn-sm">View</button>
-                        <button v-if="user && user.role === 'Administrador'" @click="goToEditEmployee(employee.nif)" class="btn btn-warning btn-sm">Edit</button>
+                        <button @click="goToViewEmployee(employee.nif)" class="btn btn-primary">View</button>
+                        <button v-if="user && user.role === 'Administrador'" @click="goToEditEmployee(employee.nif)" class="btn btn-warning">Edit</button>
                         <button v-if="user && user.role === 'Administrador'" @click="confirmDeleteEmployee(employee.nif)"
-                          class="btn btn-danger btn-sm">Delete</button>
+                          class="btn btn-danger">Delete</button>
                       </div>
                     </td>
                   </tr>

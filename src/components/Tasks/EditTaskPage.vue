@@ -41,6 +41,7 @@ import { fetchWithAuth } from '@/api';
 
   export default {
     name: 'EditTaskPage',
+    props: ['user'],
     data() {
       return {
         description: '',
@@ -54,8 +55,11 @@ import { fetchWithAuth } from '@/api';
     async created() {
       const taskId = this.$route.params.id;
       try {
-        // Fetch employees
-        const employeesResponse = await fetchWithAuth('http://localhost:8080/api/employee', {
+        const url = this.user.role === "Administrador" 
+        ? 'http://localhost:8080/api/employee' 
+        : `http://localhost:8080/api/employee/department/${this.user.employee.department._id}`;
+        
+        const employeesResponse = await fetchWithAuth(url, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
