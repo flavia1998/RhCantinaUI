@@ -56,7 +56,8 @@ export default {
         });
 
         if (!response.ok) {
-          throw new Error('Login failed');
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Login failed');
         }
 
         const data = await response.json();
@@ -68,7 +69,7 @@ export default {
         this.$router.push('/'); // Redirect to home page
       } catch (error) {
         console.error('Login failed:', error);
-        this.errorMessage = 'Login failed. Please check your credentials and try again.';
+        this.errorMessage = error.message || 'Login failed. Please check your credentials and try again.';
       }
     },
     goToRegister() {

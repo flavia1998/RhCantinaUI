@@ -17,19 +17,6 @@
                                 <input type="text" v-model="nif" class="form-control" id="nif" required>
                             </div>
                             <div class="form-group mb-3">
-                                <label for="cardBalance">Card Balance</label>
-                                <input type="number" v-model="cardBalance" class="form-control" id="cardBalance"
-                                    required>
-                            </div>
-                            <div class="form-group mb-3">
-                                <label for="role">Role</label>
-                                <select v-model="role" class="form-control" id="role" required>
-                                    <option value="Administrador">Administrador</option>
-                                    <option value="Gestor">Gestor</option>
-                                    <option value="Funcionario">Funcionario</option>
-                                </select>
-                            </div>
-                            <div class="form-group mb-3">
                                 <label for="department">Department</label>
                                 <select v-model="department" class="form-control" id="department" required>
                                     <option v-for="dept in departments" :key="dept._id" :value="dept._id">
@@ -57,8 +44,6 @@ export default {
         return {
             name: '',
             nif: '',
-            cardBalance: 0,
-            role: '',
             department: '',
             departments: [],
             errorMessage: ''
@@ -82,8 +67,6 @@ export default {
             const employeeData = await employeeResponse.json();
             this.name = employeeData.name;
             this.nif = employeeData.nif;
-            this.cardBalance = employeeData.cardBalance;
-            this.role = employeeData.role;
             this.department = employeeData.department?._id;
 
             // Fetch departments
@@ -117,8 +100,6 @@ export default {
                     body: JSON.stringify({
                         name: this.name,
                         nif: this.nif,
-                        cardBalance: this.cardBalance,
-                        role: this.role,
                         department: this.department
                     })
                 });

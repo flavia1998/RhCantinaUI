@@ -26,11 +26,14 @@
                     <td>{{ task.description }}</td>
                     <td>{{ new Date(task.deadline).toLocaleDateString() }}</td>
                     <td>{{ task.finished ? 'Yes' : 'No' }}</td>
-                    <td>{{ task.employee.name }}</td>
+                    <td>{{ task.employee?.name }}</td>
                     <td>
                       <div class="btn-group" role="group">
-                        <button @click="goToEditTask(task._id)" class="btn btn-warning btn-sm me">Edit</button>
-                        <button @click="confirmDeleteTask(task._id)" class="btn btn-danger btn-sm">Delete</button>
+                        <button v-if="user && user.role === 'Administrador' || user.role === 'Gestor'"
+                          @click="goToEditTask(task._id)" class="btn btn-warning btn-sm me">Edit</button>
+                        <button v-if="user && user.role === 'Administrador' || user.role === 'Gestor'"
+                          @click="confirmDeleteTask(task._id)" class="btn btn-danger btn-sm">Delete</button>
+                        <button @click="confirmFinishTask(task._id)" class="btn btn-success btn-sm">Finish</button>
                       </div>
                     </td>
                   </tr>
@@ -52,6 +55,7 @@ import { fetchWithAuth } from '@/api';
 
 export default {
   name: 'TasksPage',
+  props: ['user'],
   data() {
     return {
       tasks: [],
@@ -60,7 +64,19 @@ export default {
   },
   async created() {
     try {
-      const response = await fetchWithAuth('http://localhost:8080/api/tasks', {
+      let url;
+      switch (this.user.role) {
+        case "Administrador":
+          url = 'http://localhost:8080/api/tasks';
+          break;
+        case "Funcionario":
+          url = `http://localhost:8080/api/tasks/employee/${this.user.employee.nif}`;
+          break;
+        default:
+          url = 'http://localhost:8080/api/tasks';
+          break;
+      }
+      const response = await fetchWithAuth(url, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -90,6 +106,11 @@ export default {
         this.deleteTask(taskId);
       }
     },
+    confirmFinishTask(taskId) {
+      if (window.confirm('Are you sure you want to finish this task?')) {
+        this.finishTask(taskId);
+      }
+    },
     async deleteTask(taskId) {
       try {
         const response = await fetchWithAuth(`http://localhost:8080/api/tasks/${taskId}`, {
@@ -108,6 +129,26 @@ export default {
       } catch (error) {
         console.error('Error deleting task:', error);
         this.errorMessage = 'Failed to delete task. Please try again later.';
+      }
+    },
+    async finishTask(taskId) {
+      try {
+        const response = await fetchWithAuth(`http://localhost:8080/api/tasks/${taskId}/finish`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to finish task');
+        }
+
+        const task = this.tasks.find(task => task._id === taskId);
+        task.finished = true;
+      } catch (error) {
+        console.error('Error finishing task:', error);
+        this.errorMessage = 'Failed to finish task. Please try again later.';
       }
     }
   }

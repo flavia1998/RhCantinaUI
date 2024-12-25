@@ -53,7 +53,7 @@ export default {
   },
   computed: {
     filteredEmployees() {
-      return this.employees.filter(employee => employee.role === 'Gestor');
+      return this.employees;
     }
   },
   async created() {

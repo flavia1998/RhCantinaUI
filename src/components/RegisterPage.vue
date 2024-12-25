@@ -9,16 +9,8 @@
             <div class="card-body">
               <form @submit.prevent="register">
                 <div class="form-group mb-3">
-                  <label for="name">Name</label>
-                  <input type="text" v-model="name" class="form-control" id="name" required>
-                </div>
-                <div class="form-group mb-3">
                   <label for="username">Username</label>
                   <input type="text" v-model="username" class="form-control" id="username" required>
-                </div>
-                <div class="form-group mb-3">
-                  <label for="nif">NIF</label>
-                  <input type="number" v-model="nif" class="form-control" id="nif" required>
                 </div>
                 <div class="form-group mb-3">
                   <label for="password">Password</label>
@@ -46,11 +38,9 @@
     name: 'RegisterPage',
     data() {
       return {
-        name: '',
         username: '',
         password: '',
         confirmPassword: '',
-        nif: '',
         errorMessage: ''
       }
     },
@@ -68,10 +58,8 @@
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-              name: this.name,
               username: this.username,
-              password: this.password,
-              nif: this.nif
+              password: this.password
             })
           });
   

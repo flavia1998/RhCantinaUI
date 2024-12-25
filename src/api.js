@@ -1,11 +1,10 @@
 export async function fetchWithAuth(url, options = {}) {
     const user = localStorage.getItem('user');
     if (user) {
-        const { userToken: userToken } = JSON.parse(user);
-        console.log(userToken);
+        const { token: token } = JSON.parse(user);
         options.headers = {
             ...options.headers,
-            'Authorization': `Bearer ${userToken}`
+            'Authorization': `Bearer ${token}`
         };
     }
 
@@ -18,4 +17,19 @@ export async function fetchWithAuth(url, options = {}) {
     }
 
     return response;
+}
+
+export async function getEmployeeByNif(nif){
+    const employeeResponse = await fetchWithAuth(`http://localhost:8080/api/employee/${nif}`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!employeeResponse.ok) {
+        throw new Error('Failed to fetch employee details');
+      }
+
+      return await employeeResponse.json();
 }

@@ -24,9 +24,10 @@
                     <td>{{ department._id }}</td>
                     <td>{{ department.name }}</td>
                     <td>{{ department.discount }}</td>
-                    <td>{{ department.departmentManager.name }}</td>
+                    <td>{{ department.departmentManager?.name }}</td>
                     <td>
                       <div class="btn-group" role="group">
+                        <button @click="goToViewDepartment(department._id)" class="btn btn-info btn-sm">View</button>
                         <button @click="goToEditDepartment(department._id)" class="btn btn-warning btn-sm">Edit</button>
                         <button @click="confirmDeleteDepartment(department._id)" class="btn btn-danger btn-sm">Delete</button>
                       </div>
@@ -34,9 +35,9 @@
                   </tr>
                 </tbody>
               </table>
-            </div>
-            <div v-if="errorMessage" class="alert alert-danger mt-3" role="alert">
-              {{ errorMessage }}
+              <div v-if="errorMessage" class="alert alert-danger mt-3" role="alert">
+                {{ errorMessage }}
+              </div>
             </div>
           </div>
         </div>
@@ -47,13 +48,14 @@
 
 <script>
 import { fetchWithAuth } from '@/api';
+
 export default {
   name: 'DepartmentsPage',
   data() {
     return {
       departments: [],
       errorMessage: ''
-    }
+    };
   },
   async created() {
     try {
@@ -82,6 +84,9 @@ export default {
     goToEditDepartment(departmentId) {
       this.$router.push(`/edit-department/${departmentId}`);
     },
+    goToViewDepartment(departmentId) {
+      this.$router.push(`/view-department/${departmentId}`);
+    },
     confirmDeleteDepartment(departmentId) {
       if (window.confirm('Are you sure you want to delete this department?')) {
         this.deleteDepartment(departmentId);
@@ -100,7 +105,6 @@ export default {
           throw new Error('Failed to delete department');
         }
 
-        // Remove the deleted department from the list
         this.departments = this.departments.filter(department => department._id !== departmentId);
       } catch (error) {
         console.error('Error deleting department:', error);
@@ -108,7 +112,7 @@ export default {
       }
     }
   }
-}
+};
 </script>
 
 <style scoped>

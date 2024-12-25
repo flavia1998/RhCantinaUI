@@ -5,7 +5,8 @@
         <div class="card">
           <div class="card-header d-flex justify-content-between align-items-center">
             <h3>Employees</h3>
-            <button @click="goToCreateEmployee" class="btn btn-primary">Create Employee</button>
+            <button v-if="user && user.role === 'Administrador'" @click="goToCreateEmployee"
+              class="btn btn-primary">Create Employee</button>
           </div>
           <div class="card-body">
             <div class="table-responsive">
@@ -14,9 +15,8 @@
                   <tr>
                     <th>NIF</th>
                     <th>Name</th>
-                    <th>Card Balance</th>
-                    <th>Role</th>
                     <th>Department</th>
+                    <th>Card Balance</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
@@ -24,13 +24,13 @@
                   <tr v-for="employee in employees" :key="employee.nif">
                     <td>{{ employee.nif }}</td>
                     <td>{{ employee.name }}</td>
-                    <td>{{ employee.cardBalance }}</td>
-                    <td>{{ employee.role }}</td>
                     <td>{{ employee.department?.name }}</td>
+                    <td>{{ employee.cardBalance }}</td>
                     <td>
                       <div class="btn-group" role="group">
-                        <button @click="goToEditEmployee(employee.nif)" class="btn btn-warning btn-sm">Edit</button>
-                        <button @click="confirmDeleteEmployee(employee.nif)"
+                        <button @click="goToViewEmployee(employee.nif)" class="btn btn-info btn-sm">View</button>
+                        <button v-if="user && user.role === 'Administrador'" @click="goToEditEmployee(employee.nif)" class="btn btn-warning btn-sm">Edit</button>
+                        <button v-if="user && user.role === 'Administrador'" @click="confirmDeleteEmployee(employee.nif)"
                           class="btn btn-danger btn-sm">Delete</button>
                       </div>
                     </td>
@@ -53,6 +53,7 @@ import { fetchWithAuth } from '@/api';
 
 export default {
   name: 'EmployeesPage',
+  props: ['user'],
   data() {
     return {
       employees: [],
@@ -61,7 +62,11 @@ export default {
   },
   async created() {
     try {
-      const response = await fetchWithAuth('http://localhost:8080/api/employee', {
+      const url = this.user && this.user.role === "Administrador"
+        ? 'http://localhost:8080/api/employee'
+        : `http://localhost:8080/api/employee/department/${this.user.employee.department._id}`;
+
+      const response = await fetchWithAuth(url, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -69,14 +74,15 @@ export default {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to fetch employees');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to fetch employees');
       }
 
       const data = await response.json();
       this.employees = data;
     } catch (error) {
       console.error('Error fetching employees:', error);
-      this.errorMessage = 'Failed to fetch employees. Please try again later.';
+      this.errorMessage = error.message || 'Failed to fetch employees. Please try again later.';
     }
   },
   methods: {
@@ -85,6 +91,9 @@ export default {
     },
     goToEditEmployee(employeeId) {
       this.$router.push(`/edit-employee/${employeeId}`);
+    },
+    goToViewEmployee(employeeId) {
+      this.$router.push(`/view-employee/${employeeId}`);
     },
     confirmDeleteEmployee(employeeId) {
       if (window.confirm('Are you sure you want to delete this employee?')) {
@@ -101,14 +110,15 @@ export default {
         });
 
         if (!response.ok) {
-          throw new Error('Failed to delete employee');
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Failed to delete employee');
         }
 
         // Remove the deleted employee from the list
         this.employees = this.employees.filter(employee => employee.nif !== employeeId);
       } catch (error) {
         console.error('Error deleting employee:', error);
-        this.errorMessage = 'Failed to delete employee. Please try again later.';
+        this.errorMessage = error.message || 'Failed to delete employee. Please try again later.';
       }
     }
   }
