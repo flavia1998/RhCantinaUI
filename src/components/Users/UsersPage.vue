@@ -187,7 +187,8 @@ export default {
         });
 
         if (!response.ok) {
-          throw new Error('Failed to activate user');
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to activate user');
         }
 
         // Update the user status to active
@@ -199,8 +200,10 @@ export default {
         modal.hide();
         this.errorMessage = '';
       } catch (error) {
+        const modal = bootstrap.Modal.getInstance(document.getElementById('activateUserModal'));
+        modal.hide();
         console.error('Error activating user:', error);
-        this.errorMessage = 'Failed to activate user. Please try again later.';
+        this.errorMessage = error.message || 'Failed to activate user. Please try again later.';
       }
     }
   }

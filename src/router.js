@@ -56,10 +56,8 @@ router.beforeEach((to, from, next) => {
 
   if (!authPages.includes(to.path)) {
     const user = JSON.parse(userString);
-    const userRole = user.role;
-
     if (to.meta.roles) {
-      if (!to.meta.roles.includes(userRole)) {
+      if (!to.meta.roles.includes(user.role)) {
         return next('/'); // Redirect to home if the user does not have the required role
       }
     }

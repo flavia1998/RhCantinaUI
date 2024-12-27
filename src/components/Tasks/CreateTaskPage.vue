@@ -94,8 +94,6 @@ export default {
             throw new Error('Failed to create task');
           }
   
-          const data = await response.json();
-          console.log('Task created successfully:', data);
           this.errorMessage = ''; // Clear any previous error message
           this.$router.push('/tasks'); // Redirect to tasks page
         } catch (error) {

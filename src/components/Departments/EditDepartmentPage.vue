@@ -113,8 +113,6 @@ export default {
             throw new Error('Failed to update department');
           }
   
-          const data = await response.json();
-          console.log('Department updated successfully:', data);
           this.errorMessage = ''; // Clear any previous error message
           this.$router.push('/departments'); // Redirect to departments page
         } catch (error) {

@@ -5,7 +5,16 @@
         <div class="card">
           <div class="card-header d-flex justify-content-between align-items-center">
             <h3>Tasks</h3>
-            <button v-if="user && user.role !== 'Funcionario'" @click="goToCreateTask" class="btn btn-primary">Create Task</button>
+            <div class="d-flex align-items-center">
+              <select v-if="user && user.role === 'Gestor'" v-model="selectedEmployee" @change="fetchTasks"
+                class="form-select me-2 custom-select">
+                <option v-for="employee in employees" :key="employee.nif" :value="employee.nif">
+                  {{ employee.name }}
+                </option>
+              </select>
+              <button v-if="user && user.role !== 'Funcionario'" @click="goToCreateTask" class="btn btn-primary">Create
+                Task</button>
+            </div>
           </div>
           <div class="card-body">
             <div class="table-responsive">
@@ -29,11 +38,12 @@
                     <td>{{ task.employee?.name }}</td>
                     <td>
                       <div class="btn-group" role="group">
-                        <button v-if="user && user.role === 'Administrador' || user.role === 'Gestor'"
+                        <button v-if="user && (user.role === 'Administrador' || user.role === 'Gestor')"
                           @click="goToEditTask(task._id)" class="btn btn-warning me">Edit</button>
-                        <button v-if="user && user.role === 'Administrador' || user.role === 'Gestor'"
+                        <button v-if="user && (user.role === 'Administrador' || user.role === 'Gestor')"
                           @click="confirmDeleteTask(task._id)" class="btn btn-danger">Delete</button>
-                        <button v-if="!task.finished" @click="confirmFinishTask(task._id)" class="btn btn-success">Finish</button>
+                        <button v-if="!task.finished" @click="confirmFinishTask(task._id)"
+                          class="btn btn-success">Finish</button>
                       </div>
                     </td>
                   </tr>
@@ -59,34 +69,70 @@ export default {
   data() {
     return {
       tasks: [],
+      employees: [],
+      selectedEmployee: '',
       errorMessage: ''
-    }
+    };
   },
   async created() {
-    try {
-      const url = this.user && this.user.role === "Administrador"
-        ? 'http://localhost:8080/api/tasks'
-        : `http://localhost:8080/api/tasks/employee/${this.user.employee.nif}`;
-
-      const response = await fetchWithAuth(url, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch tasks');
-      }
-
-      const data = await response.json();
-      this.tasks = data;
-    } catch (error) {
-      console.error('Error fetching tasks:', error);
-      this.errorMessage = 'Failed to fetch tasks. Please try again later.';
+    if (this.user && this.user.role === 'Gestor') {
+      this.selectedEmployee = this.user.employee.nif;
     }
+    await this.fetchEmployees();
+    await this.fetchTasks();
   },
   methods: {
+    async fetchEmployees() {
+      if (this.user && this.user.role === 'Gestor') {
+        try {
+          const response = await fetchWithAuth(`http://localhost:8080/api/employee/department/${this.user.employee.department._id}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to fetch employees');
+          }
+
+          const data = await response.json();
+          this.employees = data;
+        } catch (error) {
+          console.error('Error fetching employees:', error);
+          this.errorMessage = 'Failed to fetch employees. Please try again later.';
+        }
+      }
+    },
+    async fetchTasks() {
+      try {
+        let url;
+        if (this.user.role === 'Administrador') {
+          url = 'http://localhost:8080/api/tasks';
+        } else if (this.user.role === 'Gestor' && this.selectedEmployee) {
+          url = `http://localhost:8080/api/tasks/employee/${this.selectedEmployee}`;
+        } else {
+          url = `http://localhost:8080/api/tasks/employee/${this.user.employee.nif}`;
+        }
+
+        const response = await fetchWithAuth(url, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch tasks');
+        }
+
+        const data = await response.json();
+        this.tasks = data;
+      } catch (error) {
+        console.error('Error fetching tasks:', error);
+        this.errorMessage = 'Failed to fetch tasks. Please try again later.';
+      }
+    },
     goToCreateTask() {
       this.$router.push('/create-task');
     },
@@ -113,14 +159,15 @@ export default {
         });
 
         if (!response.ok) {
-          throw new Error('Failed to delete task');
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Failed to delete task');
         }
 
         // Remove the deleted task from the list
         this.tasks = this.tasks.filter(task => task._id !== taskId);
       } catch (error) {
         console.error('Error deleting task:', error);
-        this.errorMessage = 'Failed to delete task. Please try again later.';
+        this.errorMessage = error.message || 'Failed to delete task. Please try again later.';
       }
     },
     async finishTask(taskId) {
@@ -144,11 +191,15 @@ export default {
       }
     }
   }
-}
+};
 </script>
 
 <style scoped>
 .container {
   margin-top: 50px;
+}
+
+.custom-select {
+  width: 200px;
 }
 </style>

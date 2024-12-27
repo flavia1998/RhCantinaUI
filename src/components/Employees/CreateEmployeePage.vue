@@ -90,8 +90,6 @@ export default {
                     throw new Error('Failed to create employee');
                 }
 
-                const data = await response.json();
-                console.log('Employee created successfully:', data);
                 this.errorMessage = ''; // Clear any previous error message
                 this.$router.push('/employees'); // Redirect to employees page
             } catch (error) {

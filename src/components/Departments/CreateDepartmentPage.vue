@@ -95,8 +95,6 @@ export default {
           throw new Error('Failed to create department');
         }
 
-        const data = await response.json();
-        console.log('Department created successfully:', data);
         this.errorMessage = ''; // Clear any previous error message
         this.$router.push('/departments'); // Redirect to departments page
       } catch (error) {

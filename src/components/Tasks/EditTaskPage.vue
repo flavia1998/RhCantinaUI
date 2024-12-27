@@ -116,8 +116,6 @@ import { fetchWithAuth } from '@/api';
             throw new Error('Failed to update task');
           }
   
-          const data = await response.json();
-          console.log('Task updated successfully:', data);
           this.errorMessage = ''; // Clear any previous error message
           this.$router.push('/tasks'); // Redirect to tasks page
         } catch (error) {

@@ -5,7 +5,7 @@
         <div class="card">
           <div class="card-header d-flex justify-content-between align-items-center">
             <h3>Employees</h3>
-            <button v-if="user && user.role === 'Administrador'" @click="goToCreateEmployee"
+            <button v-if="user && user?.role === 'Administrador'" @click="goToCreateEmployee"
               class="btn btn-primary">Create Employee</button>
           </div>
           <div class="card-body">
@@ -29,8 +29,8 @@
                     <td>
                       <div class="btn-group" role="group">
                         <button @click="goToViewEmployee(employee.nif)" class="btn btn-primary">View</button>
-                        <button v-if="user && user.role === 'Administrador'" @click="goToEditEmployee(employee.nif)" class="btn btn-warning">Edit</button>
-                        <button v-if="user && user.role === 'Administrador'" @click="confirmDeleteEmployee(employee.nif)"
+                        <button v-if="user && user?.role === 'Administrador'" @click="goToEditEmployee(employee.nif)" class="btn btn-warning">Edit</button>
+                        <button v-if="user && user?.role === 'Administrador'" @click="confirmDeleteEmployee(employee.nif)"
                           class="btn btn-danger">Delete</button>
                       </div>
                     </td>

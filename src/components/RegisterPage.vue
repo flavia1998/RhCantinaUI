@@ -67,11 +67,10 @@
             throw new Error('Registration failed');
           }
   
-          const data = await response.json();
-          console.log('Registration successful:', data);
+          await response.json();
           // Handle successful registration here (e.g., redirect to login page)
           this.errorMessage = ''; // Clear any previous error message
-          this.$router.push('/');
+          this.$router.push('/login');
         } catch (error) {
           console.error('Registration failed:', error);
           this.errorMessage = 'Registration failed. Please check your details and try again.';

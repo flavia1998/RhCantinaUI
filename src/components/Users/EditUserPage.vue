@@ -14,7 +14,7 @@
                             </div>
                             <div class="mb-3">
                                 <label for="nif" class="form-label">NIF</label>
-                                <select id="nif" v-model="user.nif" class="form-select">
+                                <select id="nif" v-model="user.nif" class="form-select" required>
                                     <option v-for="employee in employees" :key="employee.nif" :value="employee.nif">
                                         {{ employee.name }} ({{ employee.nif }})
                                     </option>

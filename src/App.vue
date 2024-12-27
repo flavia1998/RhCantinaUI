@@ -2,7 +2,7 @@
   <div id="app">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
-        <a class="navbar-brand" href="">MyApp</a>
+        <a class="navbar-brand" href="/">MyApp</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
           aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -16,7 +16,7 @@
           <div v-if="user?.username" class="dropdown ms-auto">
             <button class="btn btn-secondary dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown"
               aria-expanded="false">
-              <b>{{ user.username }}</b> <span>{{ user.role }}</span>
+              <b>{{ user?.username }}</b> <span>{{ user?.role }}</span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
               <li v-if="user && user.nif"><a class="dropdown-item" href="#" @click="goToEmployeeDetails">Employee details</a></li>
@@ -26,7 +26,7 @@
         </div>
       </div>
     </nav>
-    <router-view :user="user" @user-logged-in="handleUserLoggedIn"></router-view>
+    <router-view :user="user" @user-logged-in="handleUserLoggedIn" @update-card-balance="updateCardBalance"></router-view>
   </div>
 </template>
 
@@ -48,7 +48,7 @@ export default {
   },
   computed: {
     filteredNavLinks() {
-      return this.navLinks.filter(link => link.roles.includes(this.user.role));
+      return this.navLinks.filter(link => link.roles.includes(this.user?.role));
     }
   },
   methods: {
@@ -68,6 +68,13 @@ export default {
     },
     goToEmployeeDetails() {
       this.$router.push(`/view-employee/${this.user.nif}`);
+    },
+    updateCardBalance(newBalance) {
+      if (this.user && this.user.employee) {
+        console.log('Updating card balance:', newBalance);
+        this.user.employee.cardBalance = newBalance;
+        localStorage.setItem('user', JSON.stringify(this.user));
+      }
     }
   }
 };

@@ -60,9 +60,7 @@ export default {
           throw new Error(errorData.error || 'Login failed');
         }
 
-        const data = await response.json();
-        console.log('Login successful:', data);
-        const user = data;
+        const user = await response.json();
         localStorage.setItem('user', JSON.stringify(user));
         this.errorMessage = ''; // Clear any previous error message
         this.$emit('user-logged-in', user); // Emit event to notify parent component
