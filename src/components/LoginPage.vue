@@ -9,7 +9,7 @@
           <div class="card-body">
             <form @submit.prevent="login">
               <div class="form-group mb-3">
-                <label for="username">Username</label>
+                <label for="username">Nome de utilizador</label>
                 <input type="text" v-model="username" class="form-control" id="username" required>
               </div>
               <div class="form-group mb-3">
@@ -22,7 +22,7 @@
               {{ errorMessage }}
             </div>
             <div class="mt-3">
-              <p>Don't have an account? <a href="#" @click="goToRegister">Register</a></p>
+              <p>Não tem conta? <a href="#" @click="goToRegister">Registo</a></p>
             </div>
           </div>
         </div>
@@ -57,17 +57,16 @@ export default {
 
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.error || 'Login failed');
+          throw new Error(errorData.error);
         }
 
         const user = await response.json();
         localStorage.setItem('user', JSON.stringify(user));
-        this.errorMessage = ''; // Clear any previous error message
-        this.$emit('user-logged-in', user); // Emit event to notify parent component
-        this.$router.push('/'); // Redirect to home page
+        this.errorMessage = '';
+        this.$emit('user-logged-in', user);
+        this.$router.push('/');
       } catch (error) {
-        console.error('Login failed:', error);
-        this.errorMessage = error.message || 'Login failed. Please check your credentials and try again.';
+        this.errorMessage = error.message || 'Login falhou. Tente novamente.';
       }
     },
     goToRegister() {

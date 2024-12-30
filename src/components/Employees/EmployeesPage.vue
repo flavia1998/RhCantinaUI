@@ -4,9 +4,9 @@
       <div class="col-md-10">
         <div class="card">
           <div class="card-header d-flex justify-content-between align-items-center">
-            <h3>Employees</h3>
+            <h3>Funcionários</h3>
             <button v-if="user && user?.role === 'Administrador'" @click="goToCreateEmployee"
-              class="btn btn-primary">Create Employee</button>
+              class="btn btn-primary">Criar funcionário</button>
           </div>
           <div class="card-body">
             <div class="table-responsive">
@@ -14,10 +14,10 @@
                 <thead>
                   <tr>
                     <th>NIF</th>
-                    <th>Name</th>
-                    <th>Department</th>
-                    <th>Card Balance</th>
-                    <th>Actions</th>
+                    <th>Nome</th>
+                    <th>Departmento</th>
+                    <th>Saldo</th>
+                    <th>Ações</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -28,10 +28,10 @@
                     <td>{{ employee.cardBalance }}</td>
                     <td>
                       <div class="btn-group" role="group">
-                        <button @click="goToViewEmployee(employee.nif)" class="btn btn-primary">View</button>
-                        <button v-if="user && user?.role === 'Administrador'" @click="goToEditEmployee(employee.nif)" class="btn btn-warning">Edit</button>
+                        <button @click="goToViewEmployee(employee.nif)" class="btn btn-primary">Ver</button>
+                        <button v-if="user && user?.role === 'Administrador'" @click="goToEditEmployee(employee.nif)" class="btn btn-warning">Editar</button>
                         <button v-if="user && user?.role === 'Administrador'" @click="confirmDeleteEmployee(employee.nif)"
-                          class="btn btn-danger">Delete</button>
+                          class="btn btn-danger">Remover</button>
                       </div>
                     </td>
                   </tr>
@@ -73,16 +73,15 @@ export default {
         }
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to fetch employees');
+        throw new Error(data.error);
       }
 
-      const data = await response.json();
       this.employees = data;
     } catch (error) {
-      console.error('Error fetching employees:', error);
-      this.errorMessage = error.message || 'Failed to fetch employees. Please try again later.';
+      this.errorMessage = error.message || 'Erro a listar funcionários.';
     }
   },
   methods: {
@@ -111,14 +110,12 @@ export default {
 
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.message || 'Failed to delete employee');
+          throw new Error(errorData.message);
         }
 
-        // Remove the deleted employee from the list
         this.employees = this.employees.filter(employee => employee.nif !== employeeId);
       } catch (error) {
-        console.error('Error deleting employee:', error);
-        this.errorMessage = error.message || 'Failed to delete employee. Please try again later.';
+        this.errorMessage = error.message || 'Erro ao eliminar funcionário!';
       }
     }
   }

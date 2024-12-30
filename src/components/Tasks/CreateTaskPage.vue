@@ -4,27 +4,27 @@
         <div class="col-md-6">
           <div class="card">
             <div class="card-header">
-              <h3>Create Task</h3>
+              <h3>Criar tarefa</h3>
             </div>
             <div class="card-body">
               <form @submit.prevent="createTask">
                 <div class="form-group mb-3">
-                  <label for="description">Description</label>
+                  <label for="description">Descrição</label>
                   <input type="text" v-model="description" class="form-control text-uppercase" id="description" required>
                 </div>
                 <div class="form-group mb-3">
-                  <label for="deadline">Deadline</label>
+                  <label for="deadline">Data limite</label>
                   <input type="date" v-model="deadline" class="form-control" id="deadline" required>
                 </div>
                 <div class="form-group mb-3">
-                  <label for="employee">Employee</label>
+                  <label for="employee">Funcionário</label>
                   <select v-model="employee" class="form-control" id="employee" required>
                     <option v-for="emp in employees" :key="emp.nif" :value="emp.nif">
                       {{ emp.name }}
                     </option>
                   </select>
                 </div>
-                <button type="submit" class="btn btn-primary">Create</button>
+                <button type="submit" class="btn btn-primary">Cirar</button>
               </form>
               <div v-if="errorMessage" class="alert alert-danger mt-3" role="alert">
                 {{ errorMessage }}
@@ -63,15 +63,14 @@ export default {
           }
         });
   
+        const data = await response.json();
         if (!response.ok) {
-          throw new Error('Failed to fetch employees');
+          throw new Error(data.error);
         }
   
-        const data = await response.json();
         this.employees = data;
       } catch (error) {
-        console.error('Error fetching employees:', error);
-        this.errorMessage = 'Failed to fetch employees. Please try again later.';
+        this.errorMessage = error.message || 'Erro a listar funcionários.';
       }
     },
     methods: {
@@ -91,14 +90,14 @@ export default {
           });
   
           if (!response.ok) {
-            throw new Error('Failed to create task');
+            const data = await response.json();
+            throw new Error(data.error);
           }
   
-          this.errorMessage = ''; // Clear any previous error message
-          this.$router.push('/tasks'); // Redirect to tasks page
+          this.errorMessage = '';
+          this.$router.push('/tasks');
         } catch (error) {
-          console.error('Error creating task:', error);
-          this.errorMessage = 'Failed to create task. Please try again later.';
+          this.errorMessage = error.message || 'Erro ao criar tarefa.';
         }
       }
     }

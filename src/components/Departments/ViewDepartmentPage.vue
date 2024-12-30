@@ -4,15 +4,15 @@
       <div class="col-md-8">
         <div class="card">
           <div class="card-header">
-            <h3>Department Details</h3>
+            <h3>Detalhes do departmento</h3>
           </div>
           <div class="card-body">
             <div v-if="department">
               <p><strong>ID:</strong> {{ department._id }}</p>
-              <p><strong>Name:</strong> {{ department.name }}</p>
-              <p><strong>Discount:</strong> {{ department.discount }}</p>
-              <p><strong>Department Manager:</strong> {{ department.departmentManager?.name }}</p>
-              <h4>Employees</h4>
+              <p><strong>Nome:</strong> {{ department.name }}</p>
+              <p><strong>Desconto:</strong> {{ department.discount }}</p>
+              <p><strong>Gestor:</strong> {{ department.departmentManager?.name }}</p>
+              <h4>Funcionários</h4>
               <ul class="list-group">
                 <li v-for="employee in department.employees" :key="employee._id" class="list-group-item">
                   <strong>{{ employee.name }}</strong> ({{ employee.nif }})
@@ -20,9 +20,8 @@
               </ul>
             </div>
             <div v-else>
-              <p>Loading...</p>
+              <p>A carregar...</p>
             </div>
-            <button @click="goBack" class="btn btn-secondary mt-3">Back</button>
           </div>
         </div>
       </div>
@@ -51,15 +50,15 @@ export default {
         }
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error('Failed to fetch department');
+        throw new Error(data.error);
       }
 
-      const data = await response.json();
       this.department = data;
     } catch (error) {
-      console.error('Error fetching department:', error);
-      this.errorMessage = 'Failed to fetch department. Please try again later.';
+      this.errorMessage = error.message || 'Erro ao listar departamento!';
     }
   },
   methods: {

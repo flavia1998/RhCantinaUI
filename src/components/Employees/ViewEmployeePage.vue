@@ -4,18 +4,18 @@
         <div class="col-md-8">
           <div class="card">
             <div class="card-header">
-              <h3>Employee Details</h3>
+              <h3>Detalhes do funcionário</h3>
             </div>
             <div class="card-body">
               <div v-if="employee">
                 <p><strong>ID:</strong> {{ employee._id }}</p>
-                <p><strong>Name:</strong> {{ employee.name }}</p>
+                <p><strong>Nome:</strong> {{ employee.name }}</p>
                 <p><strong>NIF:</strong> {{ employee.nif }}</p>
-                <p><strong>Card Balance:</strong> {{ employee.cardBalance }}</p>
-                <p><strong>Department:</strong> {{ employee.department?.name }}</p>
+                <p><strong>Saldo:</strong> {{ employee.cardBalance }}</p>
+                <p><strong>Departmento:</strong> {{ employee.department?.name }}</p>
               </div>
               <div v-else>
-                <p>Loading...</p>
+                <p>A carregar...</p>
               </div>
             </div>
           </div>
@@ -45,15 +45,14 @@
           }
         });
   
+        const data = await response.json();
         if (!response.ok) {
-          throw new Error('Failed to fetch employee');
+          throw new Error(data.error);
         }
   
-        const data = await response.json();
         this.employee = data;
       } catch (error) {
-        console.error('Error fetching employee:', error);
-        this.errorMessage = 'Failed to fetch employee. Please try again later.';
+        this.errorMessage = error.message || 'Erro a carregar funcionário';
       }
     }
   };

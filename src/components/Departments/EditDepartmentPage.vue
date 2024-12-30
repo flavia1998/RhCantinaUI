@@ -4,27 +4,27 @@
         <div class="col-md-6">
           <div class="card">
             <div class="card-header">
-              <h3>Edit Department</h3>
+              <h3>Editar departmento</h3>
             </div>
             <div class="card-body">
               <form @submit.prevent="editDepartment">
                 <div class="form-group mb-3">
-                  <label for="name">Name</label>
+                  <label for="name">Nome</label>
                   <input type="text" v-model="name" class="form-control text-uppercase" id="name" required>
                 </div>
                 <div class="form-group mb-3">
-                  <label for="discount">Discount</label>
+                  <label for="discount">Desconto</label>
                   <input type="number" v-model="discount" class="form-control" id="discount" required>
                 </div>
                 <div class="form-group mb-3">
-                  <label for="departmentManager">Department Manager</label>
+                  <label for="departmentManager">Gestor</label>
                   <select v-model="departmentManager" class="form-control" id="departmentManager" required>
-                    <option v-for="employee in filteredEmployees" :key="employee._id" :value="employee._id">
+                    <option v-for="employee in employees" :key="employee._id" :value="employee._id">
                       {{ employee.name }}
                     </option>
                   </select>
                 </div>
-                <button type="submit" class="btn btn-primary">Save</button>
+                <button type="submit" class="btn btn-primary">Guardar</button>
               </form>
               <div v-if="errorMessage" class="alert alert-danger mt-3" role="alert">
                 {{ errorMessage }}
@@ -49,11 +49,6 @@ export default {
         errorMessage: ''
       }
     },
-    computed: {
-      filteredEmployees() {
-      return this.employees;
-    }
-    },
     async created() {
       const departmentId = this.$route.params.id;
       try {
@@ -65,32 +60,32 @@ export default {
           }
         });
   
+        const departmentData = await departmentResponse.json();
+
         if (!departmentResponse.ok) {
-          throw new Error('Failed to fetch department');
+          throw new Error(departmentData.error);
         }
   
-        const departmentData = await departmentResponse.json();
         this.name = departmentData.name;
         this.discount = departmentData.discount;
-        this.departmentManager = departmentData.departmentManager;
+        this.departmentManager = departmentData.departmentManager?._id;
   
-        // Fetch employees
         const employeesResponse = await fetchWithAuth('http://localhost:8080/api/employee', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
           }
         });
+
+        const employeesData = await employeesResponse.json();
   
         if (!employeesResponse.ok) {
-          throw new Error('Failed to fetch employees');
+          throw new Error(employeesData.error);
         }
   
-        const employeesData = await employeesResponse.json();
         this.employees = employeesData;
       } catch (error) {
-        console.error('Error fetching data:', error);
-        this.errorMessage = 'Failed to fetch data. Please try again later.';
+        this.errorMessage = error.message || 'Erro a listar dados!';
       }
     },
     methods: {
@@ -110,14 +105,14 @@ export default {
           });
   
           if (!response.ok) {
-            throw new Error('Failed to update department');
+            const errorData = await response.json();
+            throw new Error(errorData.error);
           }
   
           this.errorMessage = ''; // Clear any previous error message
           this.$router.push('/departments'); // Redirect to departments page
         } catch (error) {
-          console.error('Error updating department:', error);
-          this.errorMessage = 'Failed to update department. Please try again later.';
+          this.errorMessage = error.message || 'Erro a atualizar departamento!';
         }
       }
     }

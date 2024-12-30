@@ -4,12 +4,12 @@
             <div class="col-md-8">
                 <div class="card">
                     <div class="card-header">
-                        <h3>Edit User</h3>
+                        <h3>Editar utilizador</h3>
                     </div>
                     <div class="card-body">
                         <form @submit.prevent="updateUser">
                             <div class="mb-3">
-                                <label for="username" class="form-label">Username</label>
+                                <label for="username" class="form-label">Nome de utilizador</label>
                                 <input type="text" id="username" v-model="user.username" class="form-control" disabled />
                             </div>
                             <div class="mb-3">
@@ -21,19 +21,19 @@
                                 </select>
                             </div>
                             <div class="mb-3">
-                                <label for="role" class="form-label">Role</label>
+                                <label for="role" class="form-label">Função</label>
                                 <select id="role" v-model="user.role" class="form-select">
                                     <option value="Administrador">Administrador</option>
-                                    <option value="Funcionario">Funcionario</option>
+                                    <option value="Funcionario">Funcionário</option>
                                 </select>
                             </div>
                             <div class="form-group mb-3">
                                 <div class="form-check">
                                     <input type="checkbox" v-model="user.is_active" class="form-check-input" id="active">
-                                    <label class="form-check-label" for="active">Active</label>
+                                    <label class="form-check-label" for="active">Ativo</label>
                                 </div>
                             </div>
-                            <button type="submit" class="btn btn-primary">Update User</button>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
                             <div v-if="errorMessage" class="alert alert-danger mt-3" role="alert">
                                 {{ errorMessage }}
                             </div>
@@ -72,13 +72,16 @@ export default {
                 }
             });
 
+            const userData = await userResponse.json();
             if (!userResponse.ok) {
-                throw new Error('Failed to fetch user');
+                throw new Error(userData.error);
             }
 
-            const userData = await userResponse.json();
             this.user = userData;
-
+            if (this.user.role === 'Gestor') {
+                this.user.role = 'Funcionario';
+            }
+            
             const employeesResponse = await fetchWithAuth('http://localhost:8080/api/employee', {
                 method: 'GET',
                 headers: {
@@ -86,14 +89,13 @@ export default {
                 }
             });
 
+            const employeesData = await employeesResponse.json();
             if (!employeesResponse.ok) {
-                throw new Error('Failed to fetch employees');
+                throw new Error(employeesData.error);
             }
 
-            const employeesData = await employeesResponse.json();
             this.employees = employeesData;
 
-            // Ensure the selected employee is set correctly
             if (this.user.nif) {
                 const selectedEmployee = this.employees.find(employee => employee.nif === this.user.nif);
                 if (selectedEmployee) {
@@ -101,8 +103,7 @@ export default {
                 }
             }
         } catch (error) {
-            console.error('Error fetching data:', error);
-            this.errorMessage = 'Failed to fetch data. Please try again later.';
+            this.errorMessage = error.message || 'Erro a listar dados!';
         }
     },
     methods: {
@@ -117,13 +118,13 @@ export default {
                 });
 
                 if (!response.ok) {
-                    throw new Error('Failed to update user');
+                    const data = await response.json();
+                    throw new Error(data.error);
                 }
 
                 this.$router.push('/users');
             } catch (error) {
-                console.error('Error updating user:', error);
-                this.errorMessage = 'Failed to update user. Please try again later.';
+                this.errorMessage = error.message || 'Erro ao editar utilizador.';
             }
         }
     }

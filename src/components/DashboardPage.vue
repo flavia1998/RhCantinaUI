@@ -3,20 +3,20 @@
     <div class="row">
       <div class="col-md-12 mb-3">
         <div class="alert alert-primary alert-dismissible fade show" role="alert">
-          Welcome, <strong>{{ user?.username }}</strong> to the dashboard!
+          Bem vindo, <strong>{{ user?.username }}</strong> à plataforma!
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
       </div>
       <div class="col-md-4 mb-3">
         <div class="card shadow-sm">
           <div class="card-header bg-primary text-white">
-            <h5 class="card-title mb-0">Profile</h5>
+            <h5 class="card-title mb-0">Perfil</h5>
           </div>
           <div class="card-body">
             <div class="mb-3">
-              <p class="card-text"><strong>Username:</strong> {{ user?.username }}</p>
-              <p class="card-text" v-if="user?.nif"><strong>Nif:</strong> {{ user?.nif }}</p>
-              <p class="card-text"><strong>Role:</strong> {{ user?.role }}</p>
+              <p class="card-text"><strong>Nome de utilizador:</strong> {{ user?.username }}</p>
+              <p class="card-text" v-if="user?.nif"><strong>NIF:</strong> {{ user?.nif }}</p>
+              <p class="card-text"><strong>Função:</strong> {{ user?.role }}</p>
             </div>
           </div>
         </div>
@@ -24,13 +24,13 @@
       <div class="col-md-4 mb-3" v-if="user?.employee">
         <div class="card shadow-sm">
           <div class="card-header bg-primary text-white">
-            <h5 class="card-title mb-0">Employee info</h5>
+            <h5 class="card-title mb-0">Informação do funcionário</h5>
           </div>
           <div class="card-body">
-            <p class="card-text"><strong>Name:</strong> {{ user.employee.name }}</p>
-            <p class="card-text" v-if="user.employee.department"><strong>Department:</strong> {{
+            <p class="card-text"><strong>Nome:</strong> {{ user.employee.name }}</p>
+            <p class="card-text" v-if="user.employee.department"><strong>Departmento:</strong> {{
               user.employee.department.name }}</p>
-            <p class="card-text" v-if="user?.role === 'Funcionario' && user.employee.department?.departmentManager"><strong>Manager:</strong> {{
+            <p class="card-text" v-if="user?.role === 'Funcionario' && user.employee.department?.departmentManager"><strong>Gestor:</strong> {{
               user.employee.department.departmentManager.name }}</p>
           </div>
         </div>
@@ -38,11 +38,11 @@
       <div class="col-md-4 mb-3" v-if="user?.employee">
         <div class="card shadow-sm">
           <div class="card-header bg-primary text-white">
-            <h5 class="card-title mb-0">Balance</h5>
+            <h5 class="card-title mb-0">Cartão</h5>
           </div>
           <div class="card-body">
-            <p class="card-text"><strong>Card Balance:</strong> {{ user.employee.cardBalance }}</p>
-            <button class="btn btn-primary mt-3" @click="addBalance">Add Balance</button>
+            <p class="card-text"><strong>Saldo:</strong> {{ user.employee.cardBalance }}</p>
+            <button class="btn btn-primary mt-3" @click="addBalance">Adicionar saldo</button>
           </div>
         </div>
       </div>
@@ -71,31 +71,31 @@ export default {
     return {
       links: [
         {
-          title: 'Departments',
-          description: 'View and manage departments',
+          title: 'Departamentos',
+          description: 'Ver e gerir departamentos',
           path: '/departments',
-          buttonText: 'Go to Departments',
+          buttonText: 'Ir para Departamentos',
           roles: ['Administrador']
         },
         {
-          title: 'Employees',
-          description: 'View and manage employees',
+          title: 'Funcionários',
+          description: 'Ver e gerir funcionários',
           path: '/employees',
-          buttonText: 'Go to Employees',
+          buttonText: 'Ir para Funcionários',
           roles: ['Administrador', 'Gestor']
         },
         {
-          title: 'Tasks',
-          description: 'View and manage tasks',
+          title: 'Tarefas',
+          description: 'Ver e gerir tarefas',
           path: '/tasks',
-          buttonText: 'Go to Tasks',
-          roles: ['Administrador', 'Gestor', 'Funcionário']
+          buttonText: 'Ir para Tarefas',
+          roles: ['Administrador', 'Gestor', 'Funcionario']
         },
         {
-          title: 'Users',
-          description: 'View and manage users',
+          title: 'Utilizadores',
+          description: 'Ver e gerir utilizadores',
           path: '/users',
-          buttonText: 'Go to Users',
+          buttonText: 'Ir para Utilizadores',
           roles: ['Administrador']
         }
       ],
@@ -109,7 +109,7 @@ export default {
   },
   methods: {
     async addBalance() {
-      const amount = prompt("Enter the amount to add to the balance:");
+      const amount = prompt("Insira o montante de saldo a adicionar:");
       if (amount === null) {
         return;
       }
@@ -123,18 +123,17 @@ export default {
             body: JSON.stringify({ amount: parseFloat(amount) })
           });
 
+          const data = await response.json();
           if (!response.ok) {
-            throw new Error('Failed to add balance');
+            throw new Error(data.error);
           }
 
-          const data = await response.json();
-          this.$emit('update-card-balance', data.cardBalance); // Emit the event with the new balance
+          this.$emit('update-card-balance', data.newBalance);
         } catch (error) {
-          console.error('Error adding balance:', error);
-          this.errorMessage = 'Failed to add balance. Please try again later.';
+          this.errorMessage = error.message || 'Erro a adicionar saldo.';
         }
       } else {
-        alert("Invalid amount entered. Please enter a valid number greater than 0.");
+        alert("Valor inválido introduzido. Introduza um número válido superior a 0.");
       }
     }
   }

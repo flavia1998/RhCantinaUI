@@ -4,12 +4,12 @@
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header">
-                        <h3>Create Employee</h3>
+                        <h3>Criar funcionário</h3>
                     </div>
                     <div class="card-body">
                         <form @submit.prevent="createEmployee">
                             <div class="form-group mb-3">
-                                <label for="name">Name</label>
+                                <label for="name">Nome</label>
                                 <input type="text" v-model="name" class="form-control" id="name" required>
                             </div>
                             <div class="form-group mb-3">
@@ -17,14 +17,14 @@
                                 <input type="text" v-model="nif" class="form-control" id="nif" required>
                             </div>
                             <div class="form-group mb-3">
-                                <label for="department">Department</label>
+                                <label for="department">Departmento</label>
                                 <select v-model="department" class="form-control" id="department" required>
                                     <option v-for="dept in departments" :key="dept._id" :value="dept._id">
                                         {{ dept.name }}
                                     </option>
                                 </select>
                             </div>
-                            <button type="submit" class="btn btn-primary">Create</button>
+                            <button type="submit" class="btn btn-primary">Criar</button>
                         </form>
                         <div v-if="errorMessage" class="alert alert-danger mt-3" role="alert">
                             {{ errorMessage }}
@@ -59,15 +59,14 @@ export default {
                 }
             });
 
+            const departmentsData = await departmentsResponse.json();
             if (!departmentsResponse.ok) {
-                throw new Error('Failed to fetch departments');
+                throw new Error(departmentsData.error);
             }
 
-            const departmentsData = await departmentsResponse.json();
             this.departments = departmentsData;
         } catch (error) {
-            console.error('Error fetching data:', error);
-            this.errorMessage = 'Failed to fetch data. Please try again later.';
+            this.errorMessage = error.message || 'Erro a listar departamentos.';
         }
 
     },
@@ -87,14 +86,14 @@ export default {
                 });
 
                 if (!response.ok) {
-                    throw new Error('Failed to create employee');
+                    const data = await response.json();
+                    throw new Error(data.error);
                 }
 
-                this.errorMessage = ''; // Clear any previous error message
-                this.$router.push('/employees'); // Redirect to employees page
+                this.errorMessage = '';
+                this.$router.push('/employees');
             } catch (error) {
-                console.error('Error creating employee:', error);
-                this.errorMessage = 'Failed to create employee. Please try again later.';
+                this.errorMessage = error.message || 'Erro ao criar funcionário.';
             }
         }
     }

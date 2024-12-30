@@ -4,7 +4,7 @@
       <div class="col-md-10">
         <div class="card">
           <div class="card-header d-flex justify-content-between align-items-center">
-            <h3>Tasks</h3>
+            <h3>Tarefas</h3>
             <div class="d-flex align-items-center">
               <select v-if="user && user.role === 'Gestor'" v-model="selectedEmployee" @change="fetchTasks"
                 class="form-select me-2 custom-select">
@@ -12,8 +12,7 @@
                   {{ employee.name }}
                 </option>
               </select>
-              <button v-if="user && user.role !== 'Funcionario'" @click="goToCreateTask" class="btn btn-primary">Create
-                Task</button>
+              <button v-if="user && user.role !== 'Funcionario'" @click="goToCreateTask" class="btn btn-primary">Criar tarefa</button>
             </div>
           </div>
           <div class="card-body">
@@ -22,11 +21,11 @@
                 <thead>
                   <tr>
                     <th>ID</th>
-                    <th>Description</th>
-                    <th>Deadline</th>
-                    <th>Finished</th>
-                    <th>Employee</th>
-                    <th>Actions</th>
+                    <th>Descrição</th>
+                    <th>Data limite</th>
+                    <th>Terminada</th>
+                    <th>Funcionário</th>
+                    <th>Ações</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -34,16 +33,17 @@
                     <td>{{ task._id }}</td>
                     <td>{{ task.description }}</td>
                     <td>{{ new Date(task.deadline).toLocaleDateString() }}</td>
-                    <td>{{ task.finished ? 'Yes' : 'No' }}</td>
+                    <td>{{ task.finished ? 'Sim' : 'Não' }}</td>
                     <td>{{ task.employee?.name }}</td>
                     <td>
                       <div class="btn-group" role="group">
+                        <button @click="goToViewTask(task._id)" class="btn btn-primary">Ver</button>
                         <button v-if="user && (user.role === 'Administrador' || user.role === 'Gestor')"
-                          @click="goToEditTask(task._id)" class="btn btn-warning me">Edit</button>
+                          @click="goToEditTask(task._id)" class="btn btn-warning me">Editar</button>
                         <button v-if="user && (user.role === 'Administrador' || user.role === 'Gestor')"
-                          @click="confirmDeleteTask(task._id)" class="btn btn-danger">Delete</button>
+                          @click="confirmDeleteTask(task._id)" class="btn btn-danger">Remover</button>
                         <button v-if="!task.finished" @click="confirmFinishTask(task._id)"
-                          class="btn btn-success">Finish</button>
+                          class="btn btn-success">Terminar</button>
                       </div>
                     </td>
                   </tr>
@@ -92,15 +92,14 @@ export default {
             }
           });
 
+          const data = await response.json();
           if (!response.ok) {
-            throw new Error('Failed to fetch employees');
+            throw new Error(data.error);
           }
 
-          const data = await response.json();
           this.employees = data;
         } catch (error) {
-          console.error('Error fetching employees:', error);
-          this.errorMessage = 'Failed to fetch employees. Please try again later.';
+          this.errorMessage = error.message || 'Erro a listar funcionários.';
         }
       }
     },
@@ -122,30 +121,32 @@ export default {
           }
         });
 
+        const data = await response.json();
         if (!response.ok) {
-          throw new Error('Failed to fetch tasks');
+          throw new Error(data.error);
         }
 
-        const data = await response.json();
         this.tasks = data;
       } catch (error) {
-        console.error('Error fetching tasks:', error);
-        this.errorMessage = 'Failed to fetch tasks. Please try again later.';
+        this.errorMessage = error.message || 'Erro a listar tarefas.';
       }
     },
     goToCreateTask() {
       this.$router.push('/create-task');
     },
+    goToViewTask(taskId) {
+      this.$router.push(`/view-task/${taskId}`);
+    },
     goToEditTask(taskId) {
       this.$router.push(`/edit-task/${taskId}`);
     },
     confirmDeleteTask(taskId) {
-      if (window.confirm('Are you sure you want to delete this task?')) {
+      if (window.confirm('Tem a certeza que deseja remover a tarefa?')) {
         this.deleteTask(taskId);
       }
     },
     confirmFinishTask(taskId) {
-      if (window.confirm('Are you sure you want to finish this task?')) {
+      if (window.confirm('Tem a certeza que deseja terminar a tarefa?')) {
         this.finishTask(taskId);
       }
     },
@@ -160,14 +161,13 @@ export default {
 
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.message || 'Failed to delete task');
+          throw new Error(errorData.message);
         }
 
         // Remove the deleted task from the list
         this.tasks = this.tasks.filter(task => task._id !== taskId);
       } catch (error) {
-        console.error('Error deleting task:', error);
-        this.errorMessage = error.message || 'Failed to delete task. Please try again later.';
+        this.errorMessage = error.message || 'Erro a eliminar tarefa!';
       }
     },
     async finishTask(taskId) {
@@ -180,14 +180,14 @@ export default {
         });
 
         if (!response.ok) {
-          throw new Error('Failed to finish task');
+          const data = await response.json();
+          throw new Error(data.error);
         }
 
         const task = this.tasks.find(task => task._id === taskId);
         task.finished = true;
       } catch (error) {
-        console.error('Error finishing task:', error);
-        this.errorMessage = 'Failed to finish task. Please try again later.';
+        this.errorMessage = error.message || 'Erro a terminar tarefa!';
       }
     }
   }

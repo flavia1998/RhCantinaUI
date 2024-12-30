@@ -4,12 +4,12 @@
         <div class="col-md-6">
           <div class="card">
             <div class="card-header">
-              <h3>Register</h3>
+              <h3>Registo</h3>
             </div>
             <div class="card-body">
               <form @submit.prevent="register">
                 <div class="form-group mb-3">
-                  <label for="username">Username</label>
+                  <label for="username">Nome de utilizador</label>
                   <input type="text" v-model="username" class="form-control" id="username" required>
                 </div>
                 <div class="form-group mb-3">
@@ -17,12 +17,12 @@
                   <input type="password" v-model="password" class="form-control" id="password" required>
                 </div>
                 <div class="form-group mb-3">
-                  <label for="confirmPassword">Confirm Password</label>
+                  <label for="confirmPassword">Confirmar Password</label>
                   <input type="password" v-model="confirmPassword" class="form-control" id="confirmPassword" required>
                 </div>
-                <button type="submit" class="btn btn-primary">Register</button>
+                <button type="submit" class="btn btn-primary">Registo</button>
               </form>
-              <button @click="goToLogin" class="btn btn-link mt-3">Already have an account? Login</button>
+              <button @click="goToLogin" class="btn btn-link mt-3">Já tem conta? Login</button>
               <div v-if="errorMessage" class="alert alert-danger mt-3" role="alert">
                 {{ errorMessage }}
               </div>
@@ -63,17 +63,16 @@
             })
           });
   
+          const data = await response.json();
           if (!response.ok) {
-            throw new Error('Registration failed');
+            throw new Error(data.error);
           }
   
           await response.json();
-          // Handle successful registration here (e.g., redirect to login page)
-          this.errorMessage = ''; // Clear any previous error message
+          this.errorMessage = '';
           this.$router.push('/login');
         } catch (error) {
-          console.error('Registration failed:', error);
-          this.errorMessage = 'Registration failed. Please check your details and try again.';
+          this.errorMessage = error.message || 'Erro a registar utilizador.';
         }
       },
       goToLogin() {

@@ -4,28 +4,19 @@
       <div class="col-md-6">
         <div class="card">
           <div class="card-header">
-            <h3>Create Department</h3>
+            <h3>Criar departamento</h3>
           </div>
           <div class="card-body">
             <form @submit.prevent="createDepartment">
               <div class="form-group mb-3">
-                <label for="name">Name</label>
+                <label for="name">Nome</label>
                 <input type="text" v-model="name" class="form-control text-uppercase" id="name" required>
               </div>
               <div class="form-group mb-3">
-                <label for="discount">Discount</label>
+                <label for="discount">Desconto</label>
                 <input type="number" v-model="discount" class="form-control" id="discount" required>
               </div>
-              <div class="form-group mb-3">
-                <label for="departmentManager">Department Manager</label>
-                <select v-model="departmentManager" class="form-control" id="departmentManager">
-                  <option value="">Select a manager</option>
-                  <option v-for="employee in filteredEmployees" :key="employee._id" :value="employee._id">
-                    {{ employee.name }}
-                  </option>
-                </select>
-              </div>
-              <button type="submit" class="btn btn-primary">Create</button>
+              <button type="submit" class="btn btn-primary">Criar</button>
             </form>
             <div v-if="errorMessage" class="alert alert-danger mt-3" role="alert">
               {{ errorMessage }}
@@ -51,31 +42,6 @@ export default {
       errorMessage: ''
     }
   },
-  computed: {
-    filteredEmployees() {
-      return this.employees;
-    }
-  },
-  async created() {
-    try {
-      const response = await fetchWithAuth('http://localhost:8080/api/employee', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch employees');
-      }
-
-      const data = await response.json();
-      this.employees = data;
-    } catch (error) {
-      console.error('Error fetching employees:', error);
-      this.errorMessage = 'Failed to fetch employees. Please try again later.';
-    }
-  },
   methods: {
     async createDepartment() {
       try {
@@ -92,14 +58,14 @@ export default {
         });
 
         if (!response.ok) {
-          throw new Error('Failed to create department');
+          const errorData = await response.json();
+          throw new Error(errorData.error);
         }
 
-        this.errorMessage = ''; // Clear any previous error message
-        this.$router.push('/departments'); // Redirect to departments page
+        this.errorMessage = '';
+        this.$router.push('/departments');
       } catch (error) {
-        console.error('Error creating department:', error);
-        this.errorMessage = 'Failed to create department. Please try again later.';
+        this.errorMessage = error.message || 'Erro ao criar departamento.';
       }
     }
   }

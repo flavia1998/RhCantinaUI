@@ -4,12 +4,12 @@
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header">
-                        <h3>Edit Employee</h3>
+                        <h3>Editar funcionário</h3>
                     </div>
                     <div class="card-body">
                         <form @submit.prevent="editEmployee">
                             <div class="form-group mb-3">
-                                <label for="name">Name</label>
+                                <label for="name">Nome</label>
                                 <input type="text" v-model="name" class="form-control" id="name" required>
                             </div>
                             <div class="form-group mb-3">
@@ -17,14 +17,14 @@
                                 <input type="text" v-model="nif" class="form-control" id="nif" required>
                             </div>
                             <div class="form-group mb-3">
-                                <label for="department">Department</label>
+                                <label for="department">Departmento</label>
                                 <select v-model="department" class="form-control" id="department" required>
                                     <option v-for="dept in departments" :key="dept._id" :value="dept._id">
                                         {{ dept.name }}
                                     </option>
                                 </select>
                             </div>
-                            <button type="submit" class="btn btn-primary">Save</button>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
                         </form>
                         <div v-if="errorMessage" class="alert alert-danger mt-3" role="alert">
                             {{ errorMessage }}
@@ -52,7 +52,6 @@ export default {
     async created() {
         const employeeId = this.$route.params.id;
         try {
-            // Fetch employee details
             const employeeResponse = await fetchWithAuth(`http://localhost:8080/api/employee/${employeeId}`, {
                 method: 'GET',
                 headers: {
@@ -60,16 +59,15 @@ export default {
                 }
             });
 
+            const employeeData = await employeeResponse.json();
             if (!employeeResponse.ok) {
-                throw new Error('Failed to fetch employee');
+                throw new Error(employeeData.error);
             }
 
-            const employeeData = await employeeResponse.json();
             this.name = employeeData.name;
             this.nif = employeeData.nif;
             this.department = employeeData.department?._id;
 
-            // Fetch departments
             const departmentsResponse = await fetchWithAuth('http://localhost:8080/api/department', {
                 method: 'GET',
                 headers: {
@@ -77,15 +75,14 @@ export default {
                 }
             });
 
+            const departmentsData = await departmentsResponse.json();
             if (!departmentsResponse.ok) {
-                throw new Error('Failed to fetch departments');
+                throw new Error(departmentsData.error);
             }
 
-            const departmentsData = await departmentsResponse.json();
             this.departments = departmentsData;
         } catch (error) {
-            console.error('Error fetching data:', error);
-            this.errorMessage = 'Failed to fetch data. Please try again later.';
+            this.errorMessage = error.message || 'Erro ao carregar dados do funcionário.';
         }
     },
     methods: {
@@ -105,14 +102,14 @@ export default {
                 });
 
                 if (!response.ok) {
-                    throw new Error('Failed to update employee');
+                    const data = await response.json();
+                    throw new Error(data.error);
                 }
 
                 this.errorMessage = ''; // Clear any previous error message
                 this.$router.push('/employees'); // Redirect to employees page
             } catch (error) {
-                console.error('Error updating employee:', error);
-                this.errorMessage = 'Failed to update employee. Please try again later.';
+                this.errorMessage = error.message || 'Erro ao editar funcionário.';
             }
         }
     }

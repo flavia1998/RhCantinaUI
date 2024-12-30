@@ -19,8 +19,8 @@
               <b>{{ user?.username }}</b> <span>{{ user?.role }}</span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-              <li v-if="user && user.nif"><a class="dropdown-item" href="#" @click="goToEmployeeDetails">Employee details</a></li>
-              <li><a class="dropdown-item" href="#" @click="logout">Logout</a></li>
+              <li v-if="user && user.nif"><a class="dropdown-item" href="#" @click="goToEmployeeDetails">Detalhes do funcionario</a></li>
+              <li><a class="dropdown-item" href="#" @click="logout">Sair</a></li>
             </ul>
           </div>
         </div>
@@ -38,11 +38,14 @@ export default {
     return {
       user: JSON.parse(localStorage.getItem('user')) || null,
       navLinks: [
-        { name: 'Home', path: '/', roles: ['Administrador', 'Gestor', 'Funcionario'] },
-        { name: 'Departments', path: '/departments', roles: ['Administrador'] },
-        { name: 'Employees', path: '/employees', roles: ['Administrador', 'Gestor'] },
-        { name: 'Tasks', path: '/tasks', roles: ['Administrador', 'Gestor', 'Funcionario'] },
-        { name: 'Users', path: '/users', roles: ['Administrador'] }
+        { name: 'Inicio', path: '/', roles: ['Administrador', 'Gestor', 'Funcionario'] },
+        { name: 'Departamentos', path: '/departments', roles: ['Administrador'] },
+        { name: 'Funcionários', path: '/employees', roles: ['Administrador', 'Gestor'] },
+        { name: 'Tarefas', path: '/tasks', roles: ['Administrador', 'Gestor', 'Funcionario'] },
+        { name: 'Utilizadores', path: '/users', roles: ['Administrador'] },
+        { name: 'Ingredientes', path: '/ingredients', roles: ['Administrador', 'Gestor', 'Funcionario'] },
+        { name: 'Pratos', path: '/plates', roles: ['Administrador', 'Gestor', 'Funcionario'] },
+        { name: 'Reservas', path: '/reservations', roles: ['Administrador', 'Gestor', 'Funcionario'] },
       ]
     };
   },
@@ -71,7 +74,6 @@ export default {
     },
     updateCardBalance(newBalance) {
       if (this.user && this.user.employee) {
-        console.log('Updating card balance:', newBalance);
         this.user.employee.cardBalance = newBalance;
         localStorage.setItem('user', JSON.stringify(this.user));
       }

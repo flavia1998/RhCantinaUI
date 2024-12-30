@@ -4,18 +4,18 @@
       <div class="col-md-10">
         <div class="card">
           <div class="card-header d-flex justify-content-between align-items-center">
-            <h3>Users</h3>
+            <h3>Utilizadores</h3>
           </div>
           <div class="card-body">
             <div class="table-responsive">
               <table class="table table-striped">
                 <thead>
                   <tr>
-                    <th>Username</th>
-                    <th>Nif</th>
-                    <th>Role</th>
-                    <th>Status</th>
-                    <th>Actions</th>
+                    <th>Nome de utilizador</th>
+                    <th>NIF</th>
+                    <th>Função</th>
+                    <th>Estado</th>
+                    <th>Ações</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -23,12 +23,12 @@
                     <td>{{ user.username }}</td>
                     <td>{{ user.nif }}</td>
                     <td>{{ user.role }}</td>
-                    <td>{{ user.is_active ? 'Active' : 'Inactive' }}</td>
+                    <td>{{ user.is_active ? 'Ativo' : 'Inativo' }}</td>
                     <td>
                       <div class="btn-group" role="group">
-                        <button @click="goToEditUser(user.username)" class="btn btn-warning">Edit</button>
-                        <button v-if="!user.is_active" @click="openActivateModal(user)" class="btn btn-success">Activate</button>
-                        <button v-if="user.is_active" @click="confirmDeactivateUser(user)" class="btn btn-danger">Deactivate</button>
+                        <button @click="goToEditUser(user.username)" class="btn btn-warning">Editar</button>
+                        <button v-if="!user.is_active" @click="openActivateModal(user)" class="btn btn-success">Ativar</button>
+                        <button v-if="user.is_active" @click="confirmDeactivateUser(user)" class="btn btn-danger">Desativar</button>
                       </div>
                     </td>
                   </tr>
@@ -48,12 +48,12 @@
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="activateUserModalLabel">Activate User</h5>
+            <h5 class="modal-title" id="activateUserModalLabel">Ativar utilizador</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
             <div>
-              <label for="employee">Select Employee:</label>
+              <label for="employee">Selecionar funcionário</label>
               <select v-model="selectedEmployeeNif" id="employee" class="form-select">
                 <option v-for="employee in employees" :key="employee.nif" :value="employee.nif">
                   {{ employee.name }} ({{ employee.nif }})
@@ -61,12 +61,12 @@
               </select>
             </div>
             <div class="mt-3">
-              <button @click="handleCreateEmployee" class="btn btn-secondary">Don't have an employee? Create one first</button>
+              <button @click="handleCreateEmployee" class="btn btn-secondary">Não tem um funcionário associado? Crie um primeiro</button>
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary" @click="activateUser">Activate</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" class="btn btn-primary" @click="activateUser">Ativar</button>
           </div>
         </div>
       </div>
@@ -133,7 +133,7 @@ export default {
   props: ['user'],
   methods: {
     confirmDeactivateUser(user) {
-      if (window.confirm('Are you sure you want to deactivate this user?')) {
+      if (window.confirm('Tem a certeza de que pretende desativar este utilizador?')) {
         this.deactivateUser(user);
       }
     },
@@ -147,14 +147,14 @@ export default {
         });
 
         if (!response.ok) {
-          throw new Error('Failed to deactivate user');
+          const data = await response.json();
+          throw new Error(data.error);
         }
 
         user.is_active = false;
         this.errorMessage = '';
       } catch (error) {
-        console.error('Error deactivating user:', error);
-        this.errorMessage = 'Failed to deactivate user. Please try again later.';
+        this.errorMessage = error.message || 'Erro a desativar utilizador.';
       }
     },
     handleCreateEmployee() {
@@ -164,7 +164,7 @@ export default {
     },
     openActivateModal(user) {
       this.selectedUser = user;
-      this.selectedEmployeeNif = user.nif || null; // Pre-fill NIF if it exists
+      this.selectedEmployeeNif = user.nif || null;
       const modal = new bootstrap.Modal(document.getElementById('activateUserModal'));
       modal.show();
     },
@@ -173,7 +173,7 @@ export default {
     },
     async activateUser() {
       if (!this.selectedEmployeeNif) {
-        this.errorMessage = 'Please select an employee.';
+        this.errorMessage = 'Por favor selecione um funcionário.';
         return;
       }
 
@@ -188,22 +188,19 @@ export default {
 
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.error || 'Failed to activate user');
+          throw new Error(errorData.error);
         }
 
-        // Update the user status to active
         this.selectedUser.is_active = true;
         this.selectedUser.nif = this.selectedEmployeeNif;
 
-        // Hide the modal
         const modal = bootstrap.Modal.getInstance(document.getElementById('activateUserModal'));
         modal.hide();
         this.errorMessage = '';
       } catch (error) {
         const modal = bootstrap.Modal.getInstance(document.getElementById('activateUserModal'));
         modal.hide();
-        console.error('Error activating user:', error);
-        this.errorMessage = error.message || 'Failed to activate user. Please try again later.';
+        this.errorMessage = error.message || 'Erro a ativar utilizador.';
       }
     }
   }

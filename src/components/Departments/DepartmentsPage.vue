@@ -4,8 +4,8 @@
       <div class="col-md-10">
         <div class="card">
           <div class="card-header d-flex justify-content-between align-items-center">
-            <h3>Departments</h3>
-            <button @click="goToCreateDepartment" class="btn btn-primary">Create Department</button>
+            <h3>Departmentos</h3>
+            <button @click="goToCreateDepartment" class="btn btn-primary">Criar departmento</button>
           </div>
           <div class="card-body">
             <div class="table-responsive">
@@ -13,10 +13,10 @@
                 <thead>
                   <tr>
                     <th>ID</th>
-                    <th>Name</th>
-                    <th>Discount</th>
-                    <th>Department Manager</th>
-                    <th>Actions</th>
+                    <th>Nome</th>
+                    <th>Desconto</th>
+                    <th>Gestor</th>
+                    <th>Ações</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -27,9 +27,9 @@
                     <td>{{ department.departmentManager?.name }}</td>
                     <td>
                       <div class="btn-group" role="group">
-                        <button @click="goToViewDepartment(department._id)" class="btn btn-info">View</button>
-                        <button @click="goToEditDepartment(department._id)" class="btn btn-warning">Edit</button>
-                        <button @click="confirmDeleteDepartment(department._id)" class="btn btn-danger">Delete</button>
+                        <button @click="goToViewDepartment(department._id)" class="btn btn-primary">Ver</button>
+                        <button @click="goToEditDepartment(department._id)" class="btn btn-warning">Editar</button>
+                        <button @click="confirmDeleteDepartment(department._id)" class="btn btn-danger">Remover</button>
                       </div>
                     </td>
                   </tr>
@@ -66,15 +66,15 @@ export default {
         }
       });
 
+      const data = await response.json();
+
       if (!response.ok) {
-        throw new Error('Failed to fetch departments');
+        throw new Error(data.error);
       }
 
-      const data = await response.json();
       this.departments = data;
     } catch (error) {
-      console.error('Error fetching departments:', error);
-      this.errorMessage = 'Failed to fetch departments. Please try again later.';
+      this.errorMessage = error.message || 'Erro a listar departmentos.';
     }
   },
   methods: {
@@ -102,13 +102,13 @@ export default {
         });
 
         if (!response.ok) {
-          throw new Error('Failed to delete department');
+          const errorData = await response.json();
+          throw new Error(errorData.error);
         }
 
         this.departments = this.departments.filter(department => department._id !== departmentId);
       } catch (error) {
-        console.error('Error deleting department:', error);
-        this.errorMessage = 'Failed to delete department. Please try again later.';
+        this.errorMessage = error.message || 'Erro ao eliminar departamento!';
       }
     }
   }
