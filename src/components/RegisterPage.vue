@@ -68,7 +68,6 @@
             throw new Error(data.error);
           }
   
-          await response.json();
           this.errorMessage = '';
           this.$router.push('/login');
         } catch (error) {

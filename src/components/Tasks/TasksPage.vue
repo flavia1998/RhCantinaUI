@@ -24,7 +24,6 @@
                     <th>Descrição</th>
                     <th>Data limite</th>
                     <th>Terminada</th>
-                    <th>Funcionário</th>
                     <th>Ações</th>
                   </tr>
                 </thead>
@@ -38,7 +37,6 @@
                         <span v-if="task.finished" style="color: green;">✓</span>
                         <span v-else style="color: red;">✗</span>
                     </td>
-                    <td>{{ task.employee?.name }}</td>
                     <td>
                       <div class="btn-group" role="group">
                         <button @click="goToViewTask(task._id)" class="btn btn-primary">Ver</button>

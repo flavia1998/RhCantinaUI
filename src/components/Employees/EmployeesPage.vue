@@ -15,7 +15,7 @@
                   <tr>
                     <th>NIF</th>
                     <th>Nome</th>
-                    <th>Departmento</th>
+                    <th>Departamento</th>
                     <th>Saldo</th>
                     <th>Ações</th>
                   </tr>

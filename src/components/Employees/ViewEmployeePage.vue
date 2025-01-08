@@ -11,8 +11,8 @@
                 <p><strong>ID:</strong> {{ employee._id }}</p>
                 <p><strong>Nome:</strong> {{ employee.name }}</p>
                 <p><strong>NIF:</strong> {{ employee.nif }}</p>
-                <p><strong>Saldo:</strong> {{ employee.cardBalance }}</p>
-                <p><strong>Departmento:</strong> {{ employee.department?.name }}</p>
+                <p><strong>Saldo:</strong> {{ employee.cardBalance.toFixed(2) }}</p>
+                <p><strong>Departamento:</strong> {{ employee.department?.name }}</p>
               </div>
               <div v-else>
                 <p>A carregar...</p>
