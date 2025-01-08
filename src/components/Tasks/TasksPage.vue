@@ -24,6 +24,7 @@
                     <th>Descrição</th>
                     <th>Data limite</th>
                     <th>Terminada</th>
+                    <th v-if="user && user.role === 'Administrador'">Funcionário</th>
                     <th>Ações</th>
                   </tr>
                 </thead>
@@ -37,6 +38,7 @@
                         <span v-if="task.finished" style="color: green;">✓</span>
                         <span v-else style="color: red;">✗</span>
                     </td>
+                    <td v-if="user && user.role === 'Administrador'">{{ task.employee?.name }}</td>
                     <td>
                       <div class="btn-group" role="group">
                         <button @click="goToViewTask(task._id)" class="btn btn-primary">Ver</button>
