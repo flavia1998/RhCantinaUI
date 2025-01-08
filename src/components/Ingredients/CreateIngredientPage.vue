@@ -42,6 +42,11 @@
         errorMessage: ''
       };
     },
+    watch: {
+    'ingredient.nome': function(newVal) {
+      this.ingredient.nome = newVal.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    }
+  },
     methods: {
       async createIngredient() {
         try {

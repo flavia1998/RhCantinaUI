@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-md-12 mb-3">
         <div class="alert alert-primary alert-dismissible fade show" role="alert">
-          Bem vindo, <strong>{{ user?.username }}</strong> à plataforma!
+          Bem vindo à plataforma, <strong>{{ user?.username }}</strong> !
           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
       </div>
@@ -28,7 +28,7 @@
           </div>
           <div class="card-body">
             <p class="card-text"><strong>Nome:</strong> {{ user.employee.name }}</p>
-            <p class="card-text" v-if="user.employee.department"><strong>Departmento:</strong> {{
+            <p class="card-text" v-if="user.employee.department"><strong>Departamento:</strong> {{
               user.employee.department.name }}</p>
             <p class="card-text" v-if="user?.role === 'Funcionario' && user.employee.department?.departmentManager"><strong>Gestor:</strong> {{
               user.employee.department.departmentManager.name }}</p>
@@ -41,7 +41,7 @@
             <h5 class="card-title mb-0">Cartão</h5>
           </div>
           <div class="card-body">
-            <p class="card-text"><strong>Saldo:</strong> {{ user.employee.cardBalance }}</p>
+            <p class="card-text"><strong>Saldo:</strong> {{ user.employee.cardBalance.toFixed(2)}}</p>
             <button class="btn btn-primary mt-3" @click="addBalance">Adicionar saldo</button>
           </div>
         </div>

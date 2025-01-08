@@ -30,10 +30,14 @@
                 </thead>
                 <tbody>
                   <tr v-for="task in tasks" :key="task._id">
+                    
                     <td>{{ task._id }}</td>
                     <td>{{ task.description }}</td>
                     <td>{{ new Date(task.deadline).toLocaleDateString() }}</td>
-                    <td>{{ task.finished ? 'Sim' : 'Não' }}</td>
+                    <td class="symbol">
+                        <span v-if="task.finished" style="color: green;">✓</span>
+                        <span v-else style="color: red;">✗</span>
+                    </td>
                     <td>{{ task.employee?.name }}</td>
                     <td>
                       <div class="btn-group" role="group">
@@ -201,5 +205,12 @@ export default {
 
 .custom-select {
   width: 200px;
+}
+
+.symbol {
+  font-size: 18px; 
+  text-align: center;
+  vertical-align: middle;
+  line-height: 1.5;  
 }
 </style>

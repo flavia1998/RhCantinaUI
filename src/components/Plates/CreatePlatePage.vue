@@ -65,6 +65,11 @@
         errorMessage: ''
       };
     },
+    watch: {
+    'plate.name': function(newVal) {
+      this.plate.name = newVal.toUpperCase();
+    }
+  },
     async created() {
       await this.fetchIngredients();
     },

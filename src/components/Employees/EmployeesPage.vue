@@ -25,13 +25,13 @@
                     <td>{{ employee.nif }}</td>
                     <td>{{ employee.name }}</td>
                     <td>{{ employee.department?.name }}</td>
-                    <td>{{ employee.cardBalance }}</td>
+                    <td>{{ employee.cardBalance.toFixed(2) }}</td>
                     <td>
                       <div class="btn-group" role="group">
                         <button @click="goToViewEmployee(employee.nif)" class="btn btn-primary">Ver</button>
-                        <button v-if="user && user?.role === 'Administrador'" @click="goToEditEmployee(employee.nif)" class="btn btn-warning">Editar</button>
-                        <button v-if="user && user?.role === 'Administrador'" @click="confirmDeleteEmployee(employee.nif)"
-                          class="btn btn-danger">Remover</button>
+                       <button v-if="user && user?.role === 'Administrador'" @click="goToEditEmployee(employee.nif)" class="btn btn-warning">Editar</button>
+                        <!-- <button v-if="user && user?.role === 'Administrador'" @click="confirmDeleteEmployee(employee.nif)"
+                          class="btn btn-danger">Remover</button>-->
                       </div>
                     </td>
                   </tr>

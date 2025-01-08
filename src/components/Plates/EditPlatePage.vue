@@ -70,6 +70,11 @@
       await this.fetchIngredients();
       await this.fetchPlate(plateId);
     },
+    watch: {
+    'plate.name': function(newVal) {
+      this.plate.name = newVal.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    }
+  },
     methods: {
       async fetchIngredients() {
         try {

@@ -62,6 +62,11 @@
         this.errorMessage = error.message || 'Erro a obter detalhes do ingrediente';
       }
     },
+    watch: {
+    'ingredient.nome': function(newVal) {
+      this.ingredient.nome = newVal.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
+    }
+  },
     methods: {
       async updateIngredient() {
         const ingredientId = this.$route.params.ingredientId;

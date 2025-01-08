@@ -14,7 +14,7 @@
                   <tr>
                     <th>ID</th>
                     <th>Nome</th>
-                    <th>Desconto</th>
+                    <th>Desconto%</th>
                     <th>Gestor</th>
                     <th>Ações</th>
                   </tr>
