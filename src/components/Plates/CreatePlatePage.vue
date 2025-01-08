@@ -90,7 +90,7 @@
   
           this.ingredients = data;
         } catch (error) {
-          this.errorMessage = error.message || 'Erro a obter ingredientes';
+          this.errorMessage = error.message || 'Erro ao obter ingredientes';
         }
       },
       addIngredient() {
@@ -119,7 +119,7 @@
   
           this.$router.push('/plates');
         } catch (error) {
-          this.errorMessage = error.message || 'Erro a criar prato';
+          this.errorMessage = error.message || 'Erro ao criar prato';
         }
       }
     }
