@@ -19,6 +19,7 @@
                 <div class="form-group mb-3">
                   <label for="departmentManager">Gestor</label>
                   <select v-model="departmentManager" class="form-control" id="departmentManager" required>
+                    <option :value="null">---</option>
                     <option v-for="employee in employees" :key="employee._id" :value="employee._id">
                       {{ employee.name }}
                     </option>
