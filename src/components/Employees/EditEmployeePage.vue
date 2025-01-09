@@ -108,8 +108,8 @@ export default {
                     throw new Error(data.error);
                 }
 
-                this.errorMessage = ''; // Clear any previous error message
-                this.$router.push('/employees'); // Redirect to employees page
+                this.errorMessage = ''; 
+                this.$router.push('/employees'); 
             } catch (error) {
                 this.errorMessage = error.message || 'Erro ao editar funcionário.';
             }

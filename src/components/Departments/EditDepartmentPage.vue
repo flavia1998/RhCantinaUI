@@ -4,7 +4,7 @@
         <div class="col-md-6">
           <div class="card">
             <div class="card-header">
-              <h3>Editar departmento</h3>
+              <h3>Editar departamento</h3>
             </div>
             <div class="card-body">
               <form @submit.prevent="editDepartment">
@@ -110,8 +110,8 @@ export default {
             throw new Error(errorData.error);
           }
   
-          this.errorMessage = ''; // Clear any previous error message
-          this.$router.push('/departments'); // Redirect to departments page
+          this.errorMessage = ''; 
+          this.$router.push('/departments'); 
         } catch (error) {
           this.errorMessage = error.message || 'Erro a atualizar departamento!';
         }

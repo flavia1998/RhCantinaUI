@@ -5,7 +5,7 @@
         <div class="card">
           <div class="card-header d-flex justify-content-between align-items-center">
             <h3>Departmentos</h3>
-            <button @click="goToCreateDepartment" class="btn btn-primary">Criar departmento</button>
+            <button @click="goToCreateDepartment" class="btn btn-primary">Criar departamento</button>
           </div>
           <div class="card-body">
             <div class="table-responsive">
@@ -74,7 +74,7 @@ export default {
 
       this.departments = data;
     } catch (error) {
-      this.errorMessage = error.message || 'Erro a listar departmentos.';
+      this.errorMessage = error.message || 'Erro a listar departamentos.';
     }
   },
   methods: {

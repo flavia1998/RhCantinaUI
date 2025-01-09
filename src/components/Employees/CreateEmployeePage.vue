@@ -17,7 +17,7 @@
                                 <input type="text" v-model="nif" class="form-control" id="nif" required>
                             </div>
                             <div class="form-group mb-3">
-                                <label for="department">Departmento</label>
+                                <label for="department">Departamento</label>
                                 <select v-model="department" class="form-control" id="department" required>
                                     <option v-for="dept in departments" :key="dept._id" :value="dept._id">
                                         {{ dept.name }}
